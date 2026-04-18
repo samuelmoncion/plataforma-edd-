@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador EDD - Psicólogos y Orientadores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #7b2d73 0%, #a6329f 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffc107;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+        
+        .logo-text {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.85;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .info-box {
+            background: #f3e5f5;
+            border-left: 4px solid #7b2d73;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #7b2d73;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .info-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #7b2d73;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #7b2d73;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #7b2d73;
+            box-shadow: 0 0 0 3px rgba(123, 45, 115, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #7b2d73 0%, #a6329f 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 45, 115, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .quiz-section {
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #c93be8, #e84fcc);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .question-counter {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #7b2d73;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .question-type {
+            display: inline-block;
+            background: #f3e5f5;
+            color: #7b2d73;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-type.intervention {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .option:hover {
+            background: #f8f9fa;
+            border-color: #7b2d73;
+        }
+        
+        .option input[type="radio"] {
+            margin-top: 2px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            accent-color: #7b2d73;
+        }
+        
+        .option.selected {
+            background: #f3e5f5;
+            border-color: #7b2d73;
+        }
+        
+        .option-label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+        
+        .btn-previous {
+            flex: 1;
+            background: #6c757d;
+        }
+        
+        .btn-next {
+            flex: 1;
+        }
+        
+        .results-section {
+            text-align: center;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #7b2d73 0%, #a6329f 100%);
+            color: white;
+            padding: 50px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .score-display h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .score-display .score {
+            font-size: 72px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        
+        .score-display .max-score {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 20px;
+        }
+        
+        .score-display .percentage {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .result-status {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .result-status.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result-status.not-approved {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .feedback-section {
+            text-align: left;
+            margin-top: 40px;
+        }
+        
+        .feedback-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #7b2d73;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffc107;
+            padding-bottom: 10px;
+        }
+        
+        .answer-item {
+            background: #f8f9fa;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct {
+            border-left-color: #28a745;
+        }
+        
+        .answer-item.incorrect {
+            border-left-color: #dc3545;
+        }
+        
+        .answer-item .question-number {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .answer-item .question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #7b2d73;
+            margin-bottom: 10px;
+        }
+        
+        .answer-item .your-answer {
+            padding: 10px;
+            background: white;
+            border-left: 2px solid #dc3545;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #dc3545;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct .your-answer {
+            border-left-color: #28a745;
+            color: #28a745;
+        }
+        
+        .answer-item .correct-answer {
+            padding: 10px;
+            background: #d4edda;
+            border-left: 2px solid #28a745;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #155724;
+            border-radius: 4px;
+        }
+        
+        .answer-item .justification {
+            padding: 10px;
+            background: #f3e5f5;
+            border-left: 2px solid #7b2d73;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #7b2d73;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+        
+        .restart-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .timer {
+            display: inline-block;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .timer.warning {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-previous {
+                margin-right: 0;
+            }
+            
+            .score-display .score {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-text">REPÚBLICA DOMINICANA - MINISTERIO DE EDUCACIÓN</div>
+            <h1>Simulador EDD</h1>
+            <p><strong>Evaluación del Desempeño Docente</strong></p>
+            <p style="font-size: 12px; margin-top: 8px;">Psicólogos y Orientadores</p>
+        </div>
+        
+        <div class="content">
+            <div id="welcomeSection">
+                <div class="info-box">
+                    <strong>Simulador preparatorio — Psicólogos y Orientadores</strong>
+                    <p style="margin-top: 12px;">Diseñado para profesionales de apoyo integral que atienden bienestar socioemocional, necesidades especiales, inclusión y protección estudiantil. Basado en Ley 66-97, Orden Departamental 18/2025, Estándares MINERD de Bienestar Integral y Protocolos de Orientación.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nombre completo del/la profesional</label>
+                    <input type="text" id="psicologoName" placeholder="Ej: Dra. Rosa María Díaz" required>
+                </div>
+                
+                <div style="background: #f3e5f5; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                    <h3 style="color: #7b2d73; margin-bottom: 15px; font-size: 16px;">Información del Simulador</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Total de ítems</label>
+                            <div class="value">25</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Escala</label>
+                            <div class="value">50 pts</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Intervenciones prácticas</label>
+                            <div class="value">15</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Marco legal/competencias</label>
+                            <div class="value">10</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Tiempo total</label>
+                            <div class="value">40 min</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Puntaje mínimo</label>
+                            <div class="value">35 pts (70%)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startQuiz()">Iniciar Simulador EDD</button>
+            </div>
+            
+            <div id="quizSection" class="hidden quiz-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div id="timerDisplay" class="timer" style="display: none;">
+                        ⏱ <span id="timeRemaining">40:00</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="question-counter">
+                    Pregunta <span id="currentQuestion">1</span> de <span id="totalQuestions">25</span>
+                </div>
+                
+                <div id="typeTag" class="question-type"></div>
+                <div id="questionText" class="question-text"></div>
+                
+                <div class="options" id="optionsContainer"></div>
+                
+                <div class="button-group">
+                    <button class="btn btn-previous btn-disabled" id="btnPrevious" onclick="previousQuestion()" disabled>← Pregunta anterior</button>
+                    <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">Siguiente pregunta →</button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <p style="font-size: 13px; color: #666; margin: 0;">
+                        Se han respondido <strong id="answeredCount">0</strong> de 25 preguntas
+                    </p>
+                </div>
+            </div>
+            
+            <div id="resultsSection" class="hidden results-section">
+                <div class="score-display">
+                    <h2>Resultado de tu simulación</h2>
+                    <div class="max-score">Sobre 50 puntos</div>
+                    <div class="score" id="finalScore">0</div>
+                    <div class="percentage" id="finalPercentage">0%</div>
+                </div>
+                
+                <div id="resultStatus" class="result-status"></div>
+                
+                <div class="feedback-section" id="feedbackContainer"></div>
+                
+                <div class="restart-section">
+                    <button class="btn" onclick="restartQuiz()">Realizar otro simulador</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            // INTERVENCIONES PRÁCTICAS (15)
+            {
+                type: 'intervention',
+                text: 'Detectas que un estudiante muestra signos de abandono emocional y bajo desempeño académico derivado. Como orientador, ¿cuál es tu primer paso?',
+                options: [
+                    { text: 'Realizar entrevista confidencial con el estudiante para conocer su contexto y necesidades reales', correct: true, justification: 'El primer paso es escuchar y comprender. La entrevista confidencial establece confianza y recopila información esencial.' },
+                    { text: 'Informar a padres inmediatamente sin evaluar situación', correct: false, justification: 'Primero necesitas información. Actuar sin evaluar puede ser contraproducente.' },
+                    { text: 'Derivar a servicios externos sin intervención interna', correct: false, justification: 'Agotas opciones internas primero. La derivación es si la situación lo requiere.' },
+                    { text: 'Asumir que el problema es solo académico', correct: false, justification: 'El bajo desempeño puede tener raíces socioemocionales. Necesitas ver holísticamente.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Un estudiante con discapacidad motora enfrenta barreras arquitectónicas que limitan su participación. ¿Cómo procedes?',
+                options: [
+                    { text: 'Coordinar con dirección/docentes para adaptaciones pedagógicas, accesibilidad y apoyos necesarios', correct: true, justification: 'La inclusión requiere trabajo coordinado. Adaptaciones arquitectónicas y pedagógicas son responsabilidad institucional.' },
+                    { text: 'Decirle al estudiante que "se adapte" sin cambios', correct: false, justification: 'Eso niega su derecho a inclusión. La institución debe adaptar.' },
+                    { text: 'Sugerir cambio de centro más "accesible"', correct: false, justification: 'La inclusión es derecho aquí. Debes trabajar para que el centro sea accesible.' },
+                    { text: 'Ignorar barreras esperando que desaparezcan', correct: false, justification: 'Las barreras no desaparecen solos. Requiere intervención activa.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Identifies bullying entre estudiantes. Como orientador, ¿cuál es tu intervención?',
+                options: [
+                    { text: 'Investigación inmediata, protección de víctima, intervención con agresor/a, seguimiento y comunicación a familia', correct: true, justification: 'El acoso requiere intervención inmediata. Protección y debido proceso son esenciales.' },
+                    { text: 'Decirle a la víctima que "ignore" al agresor', correct: false, justification: 'Eso es negligencia. El acoso requiere intervención institucional.' },
+                    { text: 'Castigar al agresor sin intervención de apoyo', correct: false, justification: 'El castigo sin intervención continúa el ciclo. Necesitas cambio conductual.' },
+                    { text: 'Mantenerlo secreto para "no causar drama"', correct: false, justification: 'El acoso silenciado se perpetúa. La transparencia protege.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Un estudiante revela situación de abuso. Como orientador, ¿cuál es tu responsabilidad inmediata?',
+                options: [
+                    { text: 'Escuchar sin juzgar, documentar lo dicho, reportar a dirección/autoridades según protocolo y garantizar seguridad',correct: true, justification: 'El abuso es prioritario. Debes reportar según protocolo y proteger al menor. Esto es responsabilidad legal.' },
+                    { text: 'Prometer confidencialidad total sin informar a autoridades', correct: false, justification: 'El abuso requiere reporte obligatorio. No puedes mantener secreto que afecta seguridad.' },
+                    { text: 'Investigar por tu cuenta sin notificar a autoridades', correct: false, justification: 'Eso interferire con investigación formal. Debes reportar a autoridades.' },
+                    { text: 'Dudar de la revelación sin apoyo inmediato', correct: false, justification: 'Las revelaciones de abuso merecen toma en serio. El apoyo inmediato es esencial.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Un docente solicita orientación sobre cómo trabajar con estudiante con TDAH. ¿Cuál es tu rol?',
+                options: [
+                    { text: 'Capacitar al docente, compartir estrategias de manejo en aula y proporcionar seguimiento de implementación',correct: true, justification: 'El orientador es experto en necesidades especiales. Tu rol es capacitar y apoyar docentes.' },
+                    { text: 'Asumir toda la responsabilidad sin empoderar al docente', correct: false, justification: 'El docente sigue siendo responsable. Debes capacitarlo, no sustituirlo.' },
+                    { text: 'Indicarle que "no es problema de la escuela"', correct: false, justification: 'TDAH es condición que requiere apoyo institucional coordinado.' },
+                    { text: 'Sin proporcionar recursos específicos', correct: false, justification: 'Los docentes necesitan herramientas concretas, no solo consejo.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Detectas que varios estudiantes de grupos vulnerables (pobreza extrema) faltan frecuentemente. ¿Cómo interviene?',
+                options: [
+                    { text: 'Investigar causas (trabajo infantil, falta recursos), conectar con apoyos sociales y crear plan para asistencia',correct: true, justification: 'Las faltas tienen causas. Investigación + conexión con apoyos es intervención integral.' },
+                    { text: 'Sancionar faltas sin investigar causas', correct: false, justification: 'Sancionar sin entender causas profundiza problema. Necesitas intervención social.' },
+                    { text: 'Asumir que "están desmotivados"', correct: false, justification: 'Las causas pueden ser estructurales. Necesitas análisis profundo.' },
+                    { text: 'Reportar a autoridades sin intentar apoyo interno', correct: false, justification: 'Agotas recursos intos primero. El reporte es si hay causas de protección.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Un estudiante expresa ideación suicida en sesión. Como orientador, ¿cuál es tu protocolo?',
+                options: [
+                    { text: 'Tomar en serio, evaluar riesgo, informar a director y padre/acudiente, derivar a especialista y hacer seguimiento',correct: true, justification: 'La ideación suicida es emergencia. Protocolo claro y derivación especializada son obligatorios.' },
+                    { text: 'Ofrecer solo "palabras de apoyo" sin derivación', correct: false, justification: 'Eso es insuficiente. Necesitas evaluación y derivación profesional.' },
+                    { text: 'Mantenerlo secreto porque el estudiante lo pidió', correct: false, justification: 'No puedes guardar secreto que afecta vida. Debes informar a responsables.' },
+                    { text: 'Dar consejos de "estar positivo" sin intervención formal', correct: false, justification: 'La depresión/suicidio requiere intervención profesional, no solo motivación.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Observas que un estudiante muestra signos de problemas de aprendizaje. ¿Cuál es tu proceso de evaluación?',
+                options: [
+                    { text: 'Evaluación psicopedagógica integral, análisis de historial académico, capacidades cognitivas y recomendaciones',correct: true, justification: 'Los problemas de aprendizaje requieren evaluación profesional integral. Tu evaluación guía intervención.' },
+                    { text: 'Asumir que es "poco inteligente" sin evaluar', correct: false, justification: 'Los problemas de aprendizaje tienen causas diversas. Necesitas evaluación formal.' },
+                    { text: 'Etiquetar al estudiante sin intervención', correct: false, justification: 'La etiqueta sin intervención es estigmatizante. Necesitas plan de apoyo.' },
+                    { text: 'Sin considerar contexto familiar/social', correct: false, justification: 'Los problemas de aprendizaje tienen múltiples dimensiones. El contexto importa.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Detectas conflicto entre estudiantes de diferentes orígenes/religiones. Como orientador, ¿cómo procedes?',
+                options: [
+                    { text: 'Mediar, promover respeto por diversidad, educación intercultural y seguimiento de relación',correct: true, justification: 'El conflicto es oportunidad de aprendizaje sobre diversidad. La mediación + educación previene escaladas.' },
+                    { text: 'Separar a los estudiantes sin resolver conflicto', correct: false, justification: 'La separación sin resolución perpetúa problema. Necesitas mediar.' },
+                    { text: 'Responsabilizar a uno sin escuchar ambos lados', correct: false, justification: 'Necesitas escucha imparcial de ambas perspectivas.' },
+                    { text: 'Ignorar pensando que se "resolverá solo"', correct: false, justification: 'Los conflictos sin mediar escalan. Tu intervención es clave.' }
+                ]
+            },
+            {
+                type: 'intervention',
+                text: 'Un padre expresa preocupación sobre orientación sexual/identidad de género de su hijo/a. ¿Cómo actúa?',
+                options: [
+                    { text: 'Conversación confidencial con estudiante, apoyo sin juzgar, educación familiar sobre inclusión y seguimiento integral',correct: true, justification: 'La identidad es personal. Apoyo sin juzgar + educación familiar respetuosa es tu rol.' },
+                    { text: 'Ofrecer "terapia" para "cambiar" la orientación', correct: false, justification: 'La orientación no es enfermedad. Las "terapias de cambio" son dañinas.' },
+                    { text: 'Exponer públicamente la identidad del estudiante', correct: false, justification: 'La confidencialidad es derecho. Exponer sin consentimiento es violencia.' },
+                    { text: 'Sin educación al padre sobre aceptación', correct: false, justification: 'El padre necesita educación. Tu rol incluye facilitar aceptación familiar.' }
+                ]
+            },
+            
+            // MARCO LEGAL Y COMPETENCIAS (10)
+            {
+                type: 'legal',
+                text: '¿Cuáles son las competencias fundamentales de un orientador según Estándares MINERD?',
+                options: [
+                    { text: 'Orientación integral, apoyo socioemocional, detección de necesidades especiales e inclusión educativa',correct: true, justification: 'Estas competencias definen el rol. El orientador es profesional de bienestar integral.' },
+                    { text: 'Solo disciplina y castigo de estudiantes', correct: false, justification: 'El rol es preventivo y apoyo, no punitivo.' },
+                    { text: 'Sustituir funciones del docente', correct: false, justification: 'Trabajas en coordinación con docentes, no los sustituyes.' },
+                    { text: 'Reportar estudiantes sin intervención de apoyo', correct: false, justification: 'Primero intervención de apoyo. El reporte es último recurso.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece la Ley 66-97 sobre responsabilidad del orientador ante protección de menores?',
+                options: [
+                    { text: 'Obligación de reportar sospecha de abuso/negligencia a autoridades según protocolo establecido',correct: true, justification: 'Es responsabilidad legal. El reporteo obligatorio protege menores.' },
+                    { text: 'Libertad de no reportar si conoce al agresor', correct: false, justification: 'La obligación de reporto es universal, sin excepciones.' },
+                    { text: 'Solo reportar si tiene prueba concluyente', correct: false, justification: 'Reportas sospecha, no solo certeza. Investigación es responsabilidad de autoridades.' },
+                    { text: 'Mantener confidencialidad total sin reportar', correct: false, justification: 'La protección de menores es prioritaria. No hay confidencialidad en abuso.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cómo define la Orden Departamental 18/2025 el bienestar integral estudiantil?',
+                options: [
+                    { text: 'Atención simultánea a dimensiones académica, socioemocional, física, familiar y comunitaria del estudiante',correct: true, justification: 'La OD 18/2025 enfatiza integralidad. No es solo académico. Todas las dimensiones importan.' },
+                    { text: 'Solo enfoque académico sin lo socioemocional', correct: false, justification: 'El bienestar integral es multidimensional.' },
+                    { text: 'Responsabilidad solo del orientador', correct: false, justification: 'El bienestar integral es responsabilidad de toda institución.' },
+                    { text: 'Sin incluir familia y comunidad', correct: false, justification: 'La familia y comunidad son partes esenciales.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué derechos tiene un estudiante con necesidades especiales según normativas dominicanas?',
+                options: [
+                    { text: 'Acceso a educación, evaluación diagnóstica, apoyos especializados y currículo adaptado sin discriminación',correct: true, justification: 'Estos derechos están reconocidos legalmente. La institución debe garantizarlos.' },
+                    { text: 'Educación separada en centro especial obligatoriamente', correct: false, justification: 'La inclusión es enfoque actual. La segregación es lo excepcional.' },
+                    { text: 'Sin derecho a apoyos especiales', correct: false, justification: 'Los apoyos especializados son derecho.' },
+                    { text: 'Responsabilidad solo del orientador sin otros apoyos', correct: false, justification: 'Requiere trabajo coordinado de toda institución.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es el protocolo de confidencialidad en sesiones de orientación según ética profesional?',
+                options: [
+                    { text: 'Confidencialidad total, excepto en casos de riesgo de vida o abuso donde hay obligación legal de reporte',correct: true, justification: 'La confidencialidad es fundamental para confianza, pero con limitaciones legales claras.' },
+                    { text: 'Confidencialidad absoluta sin excepciones', correct: false, justification: 'Hay excepciones legales (abuso, riesgo vida) que requieren reporte.' },
+                    { text: 'Sin confidencialidad, todo se comparte con docentes', correct: false, justification: 'Eso violaría confianza y privacidad del estudiante.' },
+                    { text: 'Sin límites en lo que se comparte con padres', correct: false, justification: 'Requiere consentimiento del estudiante para compartir información personal.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece la normativa sobre evaluación de estudiantes con dificultades de aprendizaje?',
+                options: [
+                    { text: 'Evaluación diferenciada con adaptaciones, según diagnóstico profesional, sin reducir estándares de calidad',correct: true, justification: 'La evaluación debe ser justa. Las adaptaciones permiten participación equitativa.' },
+                    { text: 'Eximir completamente de evaluación', correct: false, justification: 'Necesita evaluación, pero con adaptaciones apropiadas.' },
+                    { text: 'Aplicar misma evaluación sin cambios', correct: false, justification: 'Eso sería injusto. Las adaptaciones son derechos.' },
+                    { text: 'Evaluar solo lo que puede hacer perfectamente', correct: false, justification: 'Se evalúan progresos y esfuerzos, no solo respuestas perfectas.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es la responsabilidad del orientador en prevención de violencia escolar?',
+                options: [
+                    { text: 'Diagnóstico de riesgos, programas preventivos, mediación de conflictos y seguimiento de casos',correct: true, justification: 'La prevención es parte central del rol. Debes intervenir antes de que escale.' },
+                    { text: 'Solo intervenir después de que ocurra violencia', correct: false, justification: 'La prevención es mejor que reacción. Debes anticipar.' },
+                    { text: 'Sin responsabilidad en prevención', correct: false, justification: 'Preventiva es responsabilidad clave del orientador.' },
+                    { text: 'Castigo como única estrategia', correct: false, justification: 'El castigo sin prevención no cambia conducta. Necesitas intervención integral.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué competencias emocionales debe tener un orientador según estándares profesionales?',
+                options: [
+                    { text: 'Inteligencia emocional, empatía, autorreflexión, manejo de estrés y comunicación empática',correct: true, justification: 'El orientador debe ser emocionalmente competente para guiar a otros. Estas son competencias no negociables.' },
+                    { text: 'Autoridad y distancia emocional con estudiantes', correct: false, justification: 'La empatía es clave. La distancia reduce efectividad.' },
+                    { text: 'Sin necesidad de manejo emocional personal', correct: false, justification: 'Tu salud emocional es requisito para apoyar otros.' },
+                    { text: 'Comunicación directiva sin escucha real', correct: false, justification: 'La escucha empática es fundamental en orientación.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cómo define la OD 18/2025 la inclusión educativa?',
+                options: [
+                    { text: 'Participación plena de todos los estudiantes con apoyo necesario, sin discriminación, respetando diversidad',correct: true, justification: 'La inclusión es derecho humano. Requiere cambios institucionales, no solo ubicación del estudiante.' },
+                    { text: 'Solo ubicar estudiantes diversos en misma aula', correct: false, justification: 'Ubicación sin apoyo no es inclusión. Necesita cambios pedagógicos y actitudinales.' },
+                    { text: 'Educación separada para estudiantes "especiales"', correct: false, justification: 'La segregación contradice el concepto de inclusión.' },
+                    { text: 'Sin responsabilidad institucional de cambio', correct: false, justification: 'La inclusión requiere cambio institucional profundo.' }
+                ]
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let answers = {};
+        let shuffledQuestions = [];
+        let quizStartTime = null;
+        let timerInterval = null;
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function shuffleOptions(question) {
+            const correct = question.options.find(o => o.correct);
+            const incorrect = question.options.filter(o => !o.correct);
+            return shuffleArray([correct, ...incorrect]);
+        }
+        
+        function startQuiz() {
+            const psicologoName = document.getElementById('psicologoName').value.trim();
+            if (!psicologoName) {
+                alert('Por favor ingresa tu nombre completo para iniciar el simulador.');
+                return;
+            }
+            
+            document.getElementById('welcomeSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            
+            shuffledQuestions = shuffleArray(questions).slice(0, 25);
+            shuffledQuestions.forEach(q => {
+                q.displayOptions = shuffleOptions(q);
+            });
+            
+            document.getElementById('totalQuestions').textContent = shuffledQuestions.length;
+            
+            quizStartTime = Date.now();
+            startTimer();
+            showQuestion();
+        }
+        
+        function startTimer() {
+            const totalSeconds = 40 * 60;
+            document.getElementById('timerDisplay').style.display = 'inline-block';
+            
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                const remaining = totalSeconds - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerDisplay = document.getElementById('timeRemaining');
+                timerDisplay.textContent = timeStr;
+                
+                if (remaining <= 300) {
+                    timerDisplay.parentElement.classList.add('warning');
+                }
+            }, 1000);
+        }
+        
+        function showQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            
+            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / shuffledQuestions.length * 100) + '%';
+            
+            const typeTag = document.getElementById('typeTag');
+            if (question.type === 'intervention') {
+                typeTag.className = 'question-type intervention';
+                typeTag.textContent = 'INTERVENCIÓN PRÁCTICA';
+            } else {
+                typeTag.className = 'question-type';
+                typeTag.textContent = 'MARCO LEGAL / COMPETENCIAS';
+            }
+            
+            document.getElementById('questionText').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.displayOptions.forEach((option, index) => {
+                const optionElement = document.createElement('label');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                    <span class="option-label">${option.text}</span>
+                `;
+                
+                optionElement.addEventListener('change', () => {
+                    answers[currentQuestion] = index;
+                    updateProgressCount();
+                    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('btnPrevious').disabled = currentQuestion === 0;
+            document.getElementById('btnNext').textContent = currentQuestion === shuffledQuestions.length - 1 ? 'Finalizar simulador →' : 'Siguiente pregunta →';
+            
+            updateProgressCount();
+        }
+        
+        function updateProgressCount() {
+            const answered = Object.keys(answers).length;
+            document.getElementById('answeredCount').textContent = answered;
+        }
+        
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < shuffledQuestions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const results = [];
+            
+            shuffledQuestions.forEach((question, index) => {
+                const selectedIndex = answers[index];
+                const isCorrect = selectedIndex !== undefined && question.displayOptions[selectedIndex].correct;
+                
+                if (isCorrect) {
+                    score += 2;
+                }
+                
+                results.push({
+                    question: question.text,
+                    selectedIndex,
+                    options: question.displayOptions,
+                    correct: isCorrect,
+                    type: question.type
+                });
+            });
+            
+            const percentage = Math.round((score / 50) * 100);
+            const approved = score >= 35;
+            
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalPercentage').textContent = percentage + '%';
+            
+            const statusEl = document.getElementById('resultStatus');
+            if (approved) {
+                statusEl.className = 'result-status approved';
+                statusEl.innerHTML = '<strong>✓ Simulación aprobada</strong><p>¡Excelente! Demuestras competencia en orientación integral, bienestar estudiantil e intervención. Estás preparado/a para la evaluación EDD.</p>';
+            } else {
+                statusEl.className = 'result-status not-approved';
+                statusEl.innerHTML = '<strong>✗ Simulación no aprobada</strong><p>Necesitas reforzar conocimientos sobre intervenciones de orientación, protección estudiantil e inclusión educativa. Revisa la retroalimentación a continuación.</p>';
+            }
+            
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            feedbackContainer.innerHTML = '<h3 class="feedback-title">Retroalimentación de respuestas</h3>';
+            
+            results.forEach((result, index) => {
+                const selectedOption = result.selectedIndex !== undefined ? result.options[result.selectedIndex] : null;
+                const correctOption = result.options.find(o => o.correct);
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = `answer-item ${result.correct ? 'correct' : 'incorrect'}`;
+                
+                let html = `
+                    <div class="question-number">Pregunta ${index + 1} - ${result.type === 'intervention' ? 'Intervención Práctica' : 'Marco Legal/Competencias'}</div>
+                    <div class="question-text">${result.question}</div>
+                `;
+                
+                if (result.selectedIndex !== undefined) {
+                    html += `<div class="your-answer"><strong>Tu respuesta:</strong> ${selectedOption.text}</div>`;
+                } else {
+                    html += `<div class="your-answer"><strong>No respondida</strong></div>`;
+                }
+                
+                if (!result.correct) {
+                    html += `<div class="correct-answer"><strong>Respuesta correcta:</strong> ${correctOption.text}</div>`;
+                }
+                
+                html += `<div class="justification"><strong>Justificación:</strong> ${correctOption.justification}</div>`;
+                
+                itemEl.innerHTML = html;
+                feedbackContainer.appendChild(itemEl);
+            });
+            
+            document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            shuffledQuestions = [];
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('welcomeSection').classList.remove('hidden');
+            document.getElementById('psicologoName').value = '';
+            document.getElementById('psicologoName').focus();
+        }
+    </script>
+</body>
+</html>

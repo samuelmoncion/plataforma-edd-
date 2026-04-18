@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador EDD - Coordinadores Docentes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a472a 0%, #2d6e44 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffc107;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+        
+        .logo-text {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.85;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #1a472a;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #1a472a;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .info-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a472a;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a472a;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a472a;
+            box-shadow: 0 0 0 3px rgba(26, 71, 42, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1a472a 0%, #2d6e44 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 71, 42, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .quiz-section {
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #4caf50, #81c784);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .question-counter {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a472a;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .question-type {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #1a472a;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-type.scenario {
+            background: #f3e5f5;
+            color: #4a148c;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .option:hover {
+            background: #f8f9fa;
+            border-color: #1a472a;
+        }
+        
+        .option input[type="radio"] {
+            margin-top: 2px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            accent-color: #1a472a;
+        }
+        
+        .option.selected {
+            background: #e8f5e9;
+            border-color: #1a472a;
+        }
+        
+        .option-label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+        
+        .btn-previous {
+            flex: 1;
+            background: #6c757d;
+        }
+        
+        .btn-next {
+            flex: 1;
+        }
+        
+        .results-section {
+            text-align: center;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #1a472a 0%, #2d6e44 100%);
+            color: white;
+            padding: 50px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .score-display h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .score-display .score {
+            font-size: 72px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        
+        .score-display .max-score {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 20px;
+        }
+        
+        .score-display .percentage {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .result-status {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .result-status.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result-status.not-approved {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .feedback-section {
+            text-align: left;
+            margin-top: 40px;
+        }
+        
+        .feedback-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a472a;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffc107;
+            padding-bottom: 10px;
+        }
+        
+        .answer-item {
+            background: #f8f9fa;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct {
+            border-left-color: #28a745;
+        }
+        
+        .answer-item.incorrect {
+            border-left-color: #dc3545;
+        }
+        
+        .answer-item .question-number {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .answer-item .question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a472a;
+            margin-bottom: 10px;
+        }
+        
+        .answer-item .your-answer {
+            padding: 10px;
+            background: white;
+            border-left: 2px solid #dc3545;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #dc3545;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct .your-answer {
+            border-left-color: #28a745;
+            color: #28a745;
+        }
+        
+        .answer-item .correct-answer {
+            padding: 10px;
+            background: #d4edda;
+            border-left: 2px solid #28a745;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #155724;
+            border-radius: 4px;
+        }
+        
+        .answer-item .justification {
+            padding: 10px;
+            background: #e8f5e9;
+            border-left: 2px solid #1a472a;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #1a472a;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+        
+        .restart-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .timer {
+            display: inline-block;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .timer.warning {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-previous {
+                margin-right: 0;
+            }
+            
+            .score-display .score {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-text">REPÚBLICA DOMINICANA - MINISTERIO DE EDUCACIÓN</div>
+            <h1>Simulador EDD</h1>
+            <p><strong>Evaluación del Desempeño Docente</strong></p>
+            <p style="font-size: 12px; margin-top: 8px;">Coordinadores Docentes</p>
+        </div>
+        
+        <div class="content">
+            <div id="welcomeSection">
+                <div class="info-box">
+                    <strong>Simulador preparatorio — Coordinadores Docentes</strong>
+                    <p style="margin-top: 12px;">Diseñado para coordinadores que supervisan desempeño pedagógico, realizan acompañamiento docente y evalúan calidad de enseñanza. Basado en Estándares Profesionales MINERD, Ley 66-97, Orden Departamental 18/2025 y Reglamento del Estatuto del Docente.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nombre completo del/la coordinador/a</label>
+                    <input type="text" id="coordinadorName" placeholder="Ej: María del Carmen García" required>
+                </div>
+                
+                <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                    <h3 style="color: #1a472a; margin-bottom: 15px; font-size: 16px;">Información del Simulador</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Total de ítems</label>
+                            <div class="value">25</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Escala</label>
+                            <div class="value">50 pts</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Escenarios prácticos</label>
+                            <div class="value">15</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Marco legal/competencias</label>
+                            <div class="value">10</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Tiempo total</label>
+                            <div class="value">40 min</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Puntaje mínimo</label>
+                            <div class="value">35 pts (70%)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startQuiz()">Iniciar Simulador EDD</button>
+            </div>
+            
+            <div id="quizSection" class="hidden quiz-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div id="timerDisplay" class="timer" style="display: none;">
+                        ⏱ <span id="timeRemaining">40:00</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="question-counter">
+                    Pregunta <span id="currentQuestion">1</span> de <span id="totalQuestions">25</span>
+                </div>
+                
+                <div id="typeTag" class="question-type"></div>
+                <div id="questionText" class="question-text"></div>
+                
+                <div class="options" id="optionsContainer"></div>
+                
+                <div class="button-group">
+                    <button class="btn btn-previous btn-disabled" id="btnPrevious" onclick="previousQuestion()" disabled>← Pregunta anterior</button>
+                    <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">Siguiente pregunta →</button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <p style="font-size: 13px; color: #666; margin: 0;">
+                        Se han respondido <strong id="answeredCount">0</strong> de 25 preguntas
+                    </p>
+                </div>
+            </div>
+            
+            <div id="resultsSection" class="hidden results-section">
+                <div class="score-display">
+                    <h2>Resultado de tu simulación</h2>
+                    <div class="max-score">Sobre 50 puntos</div>
+                    <div class="score" id="finalScore">0</div>
+                    <div class="percentage" id="finalPercentage">0%</div>
+                </div>
+                
+                <div id="resultStatus" class="result-status"></div>
+                
+                <div class="feedback-section" id="feedbackContainer"></div>
+                
+                <div class="restart-section">
+                    <button class="btn" onclick="restartQuiz()">Realizar otro simulador</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            // ESCENARIOS PRÁCTICOS (15)
+            {
+                type: 'scenario',
+                text: 'Observas que un docente tiene planificaciones desorganizadas y sin alineación a estándares MINERD. ¿Cuál es tu acción como coordinador?',
+                options: [
+                    { text: 'Reunirte con el docente, analizar sus planificaciones, identificar deficiencias y brindar acompañamiento personalizado con modelos', correct: true, justification: 'El acompañamiento pedagógico es la responsabilidad central del coordinador. Debes guiar mejora con ejemplos y seguimiento.' },
+                    { text: 'Reportar directamente al director sin intentar apoyo', correct: false, justification: 'Primero debes intentar fortalecer al docente. El reporte es último recurso tras acompañamiento fallido.' },
+                    { text: 'Ignorar el problema si el docente produce calificaciones altas', correct: false, justification: 'La calidad pedagógica requiere planificación rigurosa. Las calificaciones altas sin proceso sólido son cuestionables.' },
+                    { text: 'Hacer las planificaciones por el docente', correct: false, justification: 'Debes capacitarlo, no sustituirlo. El docente debe aprender a planificar autónomamente.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Un docente solicita permiso constante para asistencias que afectan continuidad pedagógica. Como coordinador, ¿cómo procedes?',
+                options: [
+                    { text: 'Documentar el patrón, reunirse con el docente para entender situación y establecer acuerdos claros de limite', correct: true, justification: 'Necesitas datos objetivos. Luego, diálogo para encontrar soluciones que balanceen derechos docentes con responsabilidades institucionales.' },
+                    { text: 'Denegar todos los permisos sin excepciones', correct: false, justification: 'La Ley 66-97 reconoce derechos a permisos. Debes ser razonable pero firme en límites.' },
+                    { text: 'Permitir todos los permisos para evitar confrontación', correct: false, justification: 'Eso compromete continuidad pedagógica. Tu rol requiere establecer límites profesionalmente.' },
+                    { text: 'No documentar para evitar papelería', correct: false, justification: 'La documentación es esencial para tomar decisiones informadas y justas.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Detectas que dos docentes tienen conflicto que afecta trabajo colaborativo y clima del departamento. ¿Cuál es tu intervención?',
+                options: [
+                    { text: 'Facilitar diálogo entre ambos, mediar constructivamente y buscar consensos que fortalezcan colaboración', correct: true, justification: 'El liderazgo pedagógico incluye gestionar relaciones. Mediar conflictos mejora clima y productividad.' },
+                    { text: 'Ignorar el conflicto esperando que se resuelva solo', correct: false, justification: 'Los conflictos sin resolver se amplifican. Tu intervención temprana es esencial.' },
+                    { text: 'Tomar partido obviamente con uno de los docentes', correct: false, justification: 'Debes ser imparcial. La mediación requiere escucha equilibrada.' },
+                    { text: 'Reportar directamente a dirección sin intentar resolución a nivel coordinación', correct: false, justification: 'Agota canales de resolución colaborativa primero. El reporte es ultima instancia.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Un docente te solicita orientación sobre cómo evaluar aprendizajes usando nuevas metodologías. ¿Cuál es tu rol?',
+                options: [
+                    { text: 'Ofrecer capacitación, compartir recursos, demostrar técnicas y dar seguimiento a su implementación', correct: true, justification: 'El coordinador es experto pedagógico. Guiar a docentes en innovación es tu responsabilidad central.' },
+                    { text: 'Decirle que busque capacitación externa por su cuenta', correct: false, justification: 'Eso elude tu responsabilidad. Tienes que capacitar a tu equipo.' },
+                    { text: 'Asumir personalmente todas sus evaluaciones', correct: false, justification: 'Debes empoderar al docente, no sustituirlo.' },
+                    { text: 'Ignorar la solicitud', correct: false, justification: 'El docente que busca mejorar merece tu apoyo. Esto es oportunidad de liderazgo pedagógico.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Observas que un docente usa metodologías tradicionales pese a capacitaciones sobre pedagogía moderna. ¿Cómo actúas?',
+                options: [
+                    { text: 'Realizar observaciones de clase con retroalimentación constructiva y acompañamiento especializado gradual', correct: true, justification: 'El cambio pedagógico requiere tiempo y apoyo. Observación + retroalimentación + acompañamiento es el camino correcto.' },
+                    { text: 'Avergonzar al docente públicamente', correct: false, justification: 'Eso es contraproducente. El acompañamiento debe ser confidencial y respetuoso.' },
+                    { text: 'Penalizarlo sin apoyo', correct: false, justification: 'Primero apoyo, luego evaluación de cumplimiento si hay rechazo.' },
+                    { text: 'Permitir que continúe sin intervención', correct: false, justification: 'Tu responsabilidad es asegurar calidad pedagógica. Requiere intervención.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Te corresponde diseñar un plan de mejora pedagógica para tu departamento. ¿Cuál es el primer paso?',
+                options: [
+                    { text: 'Diagnóstico participativo: analizar datos de desempeño, identificar fortalezas/debilidades y construir plan con docentes', correct: true, justification: 'Un diagnóstico sólido y participativo asegura que el plan atienda necesidades reales y tenga compromiso docente.' },
+                    { text: 'Copiar un plan de otro departamento', correct: false, justification: 'Cada departamento tiene contexto único. Plans deben ser específicos.' },
+                    { text: 'Imponer cambios sin consultar docentes', correct: false, justification: 'La resistencia al cambio es mayor sin participación. Necesitas consenso.' },
+                    { text: 'Actuar sin análisis previo', correct: false, justification: 'Las decisiones deben basarse en datos. Sin diagnóstico, acciones pueden ser inefectivas.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Un docente produce buenos resultados académicos pero tiene relaciones tensas con estudiantes y colegas. ¿Cuál es tu enfoque?',
+                options: [
+                    { text: 'Abordar integralmente: reconocer logros académicos pero trabajar competencias socioemocionales y relacionales', correct: true, justification: 'El desempeño es multidimensional. Éxito académico sin clima positivo es insostenible. Ambos aspectos importan.' },
+                    { text: 'Ignorar problemas relacionales si calificaciones son buenas', correct: false, justification: 'El ambiente tóxico afecta aprendizaje y bienestar. No puede ignorarse.' },
+                    { text: 'Penalizar solo por relaciones difíciles sin reconocer logros', correct: false, justification: 'Debes equilibrar reconocimiento de fortalezas con áreas de mejora.' },
+                    { text: 'Transferir al docente a otro departamento', correct: false, justification: 'Sin intentar acompañamiento primero, solo desplazas el problema.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Necesitas evaluar objetivamente desempeño de docentes para informe anual. ¿Cuál es tu metodología?',
+                options: [
+                    { text: 'Observaciones de clase sistemáticas, análisis de planificaciones, resultados académicos, clima relacional y autoevaluación docente', correct: true, justification: 'La evaluación integral requiere múltiples fuentes de información. Esto da visión completa y justa.' },
+                    { text: 'Solo calificaciones de estudiantes', correct: false, justification: 'Las calificaciones no reflejan desempeño integral. Necesitas múltiples indicadores.' },
+                    { text: 'Basarse en percepciones sin evidencia', correct: false, justification: 'La evaluación debe ser objetiva y documentada.' },
+                    { text: 'Observar solo ocasionalmente sin patrón', correct: false, justification: 'La observación debe ser sistemática y documentada para validez.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Un docente solicita capacitación en competencias digitales para mejorar enseñanza. Como coordinador, ¿cuál es tu responsabilidad?',
+                options: [
+                    { text: 'Identificar oportunidades de capacitación, gestionar acceso y dar seguimiento a implementación en aula', correct: true, justification: 'El coordinador facilita desarrollo profesional docente. Buscar capacitación y supervisar aplicación es tu rol.' },
+                    { text: 'Decirle que lo haga por su cuenta', correct: false, justification: 'Eso elude tu responsabilidad de desarrollo profesional del equipo.' },
+                    { text: 'Negarle capacitación por falta de presupuesto sin buscar alternativas', correct: false, justification: 'Busca recursos: MINERD, ONG, webinarios gratuitos. Hay alternativas.' },
+                    { text: 'Capacitar pero no supervisar implementación', correct: false, justification: 'Sin seguimiento, el cambio no se sostiene. Necesitas verificar uso en aula.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Te encuentras con resistencia de un grupo de docentes a nuevas estrategias pedagógicas. ¿Cómo procedes?',
+                options: [
+                    { text: 'Escuchar preocupaciones, explicar beneficios con evidencia, brindar acompañamiento gradual y reconocer miedos al cambio', correct: true, justification: 'La resistencia es normal. Escucha empática, datos sólidos y apoyo gradual reducen resistencia y facilitan adopción.' },
+                    { text: 'Imponer cambios sin escuchar', correct: false, justification: 'Eso amplifica resistencia. Necesitas diálogo y consenso.' },
+                    { text: 'Amenazar con sanciones si no adoptan', correct: false, justification: 'La coerción produce cumplimiento superficial, no cambio genuino.' },
+                    { text: 'Abandonar iniciativa ante primera resistencia', correct: false, justification: 'El cambio pedagógico requiere persistencia y adaptación, no rendición.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Necesitas documentar un caso de incumplimiento pedagógico serio de un docente. ¿Cuál es el proceso correcto?',
+                options: [
+                    { text: 'Reunión privada explicando problema, oportunidad de respuesta, documento escrito y copia al docente, directores y archivo', correct: true, justification: 'El debido proceso requiere notificación clara, oportunidad de respuesta y documentación formal. Esto protege al docente y a la institución.' },
+                    { text: 'Comunicar a otros docentes antes que al involucrado', correct: false, justification: 'El docente tiene derecho a conocer cargos primero. Comunicar a terceros antes es falta de profesionalismo.' },
+                    { text: 'Documentar parcialmente para evitar "papelería"', correct: false, justification: 'La documentación completa es esencial para validez legal y transparencia.' },
+                    { text: 'Sancionar inmediatamente sin investigación', correct: false, justification: 'Necesitas investigación sólida antes de sancionar. Protege derechos y valida decisiones.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Observas que el dominio de contenidos de un docente es débil en su especialidad. ¿Cómo abordas esto?',
+                options: [
+                    { text: 'Evaluación diagnóstica de contenidos, capacitación especializada, recursos actualizados y seguimiento de mejora', correct: true, justification: 'El dominio de contenidos es fundamental. Diagnóstico + capacitación + seguimiento es el camino para fortalecerlo.' },
+                    { text: 'Cambiar al docente sin intentar fortalecimiento', correct: false, justification: 'Sin intentar apoyo primero, desplazas el problema sin resolver.' },
+                    { text: 'Ignorar debilidad si el docente es "carismático"', correct: false, justification: 'Carisma sin contenido sólido es insuficiente. Los estudiantes necesitan enseñanza rigurosa.' },
+                    { text: 'Cargar de estudiantes a este docente sin apoyo', correct: false, justification: 'Sin fortalecimiento, más estudiantes amplifican el problema.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Tu departamento necesita establecer estándares comunes de evaluación de aprendizajes. ¿Cuál es tu liderazgo?',
+                options: [
+                    { text: 'Convoca docentes, analiza prácticas actuales, construye consenso sobre criterios y rubros, documenta y da seguimiento', correct: true, justification: 'La estandarización requiere participación y consenso. Tu liderazgo facilita diálogo y construcción colectiva.' },
+                    { text: 'Imponer estándares que diseñaste solo', correct: false, justification: 'Sin participación docente, habrá resistencia. Los estándares deben ser construidos colaborativamente.' },
+                    { text: 'Permitir que cada docente defina sus propios criterios', correct: false, justification: 'Sin estándares comunes, hay inconsistencia y desigualdad en evaluación.' },
+                    { text: 'Copiar estándares de otros centros sin adaptación', correct: false, justification: 'Los estándares deben adecuarse al contexto específico y participación del equipo.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Te corresponde hacer seguimiento a la implementación de innovaciones pedagógicas que capacitaste. ¿Cuál es tu estrategia?',
+                options: [
+                    { text: 'Observaciones de clase periódicas, retroalimentación constructiva, ajustes según contexto y documentación de progreso', correct: true, justification: 'El seguimiento sostenido asegura que la capacitación se traduce en práctica real. Sin seguimiento, el cambio no se sostiene.' },
+                    { text: 'Dar capacitación y asumir que docentes la aplicarán sin seguimiento', correct: false, justification: 'Eso es ingenuo. El cambio requiere seguimiento y apoyo continuo.' },
+                    { text: 'Seguimiento punitivo sin apoyo', correct: false, justification: 'El seguimiento debe ser formativo y de apoyo, no fiscalizador.' },
+                    { text: 'Evaluar pero no documentar progreso', correct: false, justification: 'La documentación permite ver tendencias y tomar decisiones informadas.' }
+                ]
+            },
+            {
+                type: 'scenario',
+                text: 'Un docente expresa dificultad emocional que está afectando su desempeño. Como coordinador, ¿cómo respondes?',
+                options: [
+                    { text: 'Escuchar con empatía, conectar con orientadores/psicólogos, ofrecer apoyo institucional y ajustes razonables temporales', correct: true, justification: 'Los docentes son personas. La empatía y apoyo integral (no solo pedagógico) refuerzan compromiso y recuperan desempeño.' },
+                    { text: 'Ignorar lo personal y solo exigir desempeño', correct: false, justification: 'Ignorar el bienestar reduce compromiso y empeora desempeño. Necesitas apoyo holístico.' },
+                    { text: 'Decirle que resuelva problemas personales sin ayuda institucional', correct: false, justification: 'Demuestra falta de solidaridad. Hay ajustes razonables que la institución puede ofrecer.' },
+                    { text: 'Documentar como "incumplimiento" sin intentar apoyo', correct: false, justification: 'Documentar sin ofrecer apoyo primero es injusto e inhumano.' }
+                ]
+            },
+            
+            // MARCO LEGAL Y COMPETENCIAS (10)
+            {
+                type: 'legal',
+                text: '¿Cuáles son las competencias fundamentales de un coordinador docente según Estándares MINERD?',
+                options: [
+                    { text: 'Liderazgo pedagógico, acompañamiento docente, mejora continua y gestión del cambio educativo', correct: true, justification: 'Estas competencias definen el rol. El coordinador es líder pedagógico que acompaña y facilita mejora continua.' },
+                    { text: 'Solo administración y control', correct: false, justification: 'El coordinador es pedagógico, no solo administrativo. Su foco es calidad de enseñanza.' },
+                    { text: 'Aplicar pruebas sin análisis', correct: false, justification: 'Las pruebas son herramientas. El análisis y acción posterior es lo importante.' },
+                    { text: 'Vigilancia y reporte sin apoyo', correct: false, justification: 'El reporte sin acompañamiento previo es incompleto. Primero viene el apoyo.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece la Ley 66-97 sobre responsabilidades de coordinadores en evaluación docente?',
+                options: [
+                    { text: 'Realizar supervisión pedagógica, acompañamiento, documentación de desempeño y reportes a dirección', correct: true, justification: 'La Ley 66-97 establece estas como responsabilidades coordinadores. Son el puente entre docentes y dirección.' },
+                    { text: 'Tomar decisiones disciplinarias sin participación de director', correct: false, justification: 'Las decisiones graves requieren participación directoral. El coordinador supervisa pero no decide sanciones.' },
+                    { text: 'Evaluar sin criterios establecidos', correct: false, justification: 'La evaluación debe tener criterios claros y transparentes establecidos previamente.' },
+                    { text: 'No documentar procesos', correct: false, justification: 'La documentación es esencial para validez legal y transparencia.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cómo define la Orden Departamental 18/2025 el acompañamiento pedagógico?',
+                options: [
+                    { text: 'Proceso sistemático de apoyo al docente para mejorar su práctica pedagógica mediante observación, retroalimentación y recursos', correct: true, justification: 'La OD 18/2025 enfatiza acompañamiento como apoyo formativo, no punitivo. Es clave para mejora continua.' },
+                    { text: 'Vigilancia punitiva del desempeño', correct: false, justification: 'El acompañamiento es formativo, no fiscalizador. El objetivo es mejora, no castigo.' },
+                    { text: 'Tareas administrativas del coordinador', correct: false, justification: 'El acompañamiento es pedagógico, no burocrático.' },
+                    { text: 'Reuniones ocasionales sin seguimiento', correct: false, justification: 'El acompañamiento es sistemático con seguimiento. No son acciones aisladas.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué derechos tiene un docente en proceso de evaluación según el Reglamento del Estatuto del Docente?',
+                options: [
+                    { text: 'Conocer criterios de evaluación, ser informado de observaciones, responder cargos y acceso a documentación', correct: true, justification: 'El Estatuto del Docente garantiza derechos procesales. Transparencia y debido proceso son obligatorios.' },
+                    { text: 'Ser evaluado sin conocer criterios', correct: false, justification: 'Eso violaría derechos fundamentales. Los criterios deben ser claros y previos.' },
+                    { text: 'Sin oportunidad de respuesta a observaciones', correct: false, justification: 'El docente tiene derecho a escucha y respuesta. Es principio de debido proceso.' },
+                    { text: 'Evaluación basada en preferencias sin criterios', correct: false, justification: 'La evaluación debe ser objetiva, basada en criterios establecidos.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es el propósito de la retroalimentación en acompañamiento pedagógico según marcos MINERD?',
+                options: [
+                    { text: 'Informar al docente sobre su desempeño, señalar fortalezas y áreas de mejora para desarrollo profesional continuo', correct: true, justification: 'La retroalimentación constructiva es clave para aprendizaje docente. Debe ser equilibrada y orientada a mejora.' },
+                    { text: 'Solo señalar deficiencias sin mencionar fortalezas', correct: false, justification: 'Eso desmotiva. La retroalimentación debe equilibrar reconocimiento con mejora.' },
+                    { text: 'Retener información sin compartir con el docente', correct: false, justification: 'Eso es opaco y viola derecho del docente a conocer su evaluación.' },
+                    { text: 'Crítica sin propuestas de mejora', correct: false, justification: 'Crítica constructiva incluye orientación hacia mejora. Sin soluciones no es útil.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué competencias relacionales debe tener un coordinador según Estándares MINERD?',
+                options: [
+                    { text: 'Comunicación asertiva, empatía, manejo de conflictos, trabajo colaborativo y liderazgo democrático', correct: true, justification: 'Estas competencias relacionales son esenciales. Un coordinador debe ser coach y mediador, no autoritario.' },
+                    { text: 'Autoridad absoluta sin escucha', correct: false, justification: 'El liderazgo moderno requiere escucha y democracia, no autoritarismo.' },
+                    { text: 'Distancia emocional con docentes', correct: false, justification: 'La empatía y relación genuina fortalecen liderazgo pedagógico.' },
+                    { text: 'Evitar conflictos sin resolverlos', correct: false, justification: 'Debes mediar y resolver, no evitar. El liderazgo requiere gestión de conflictos.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece el PEC (Proyecto Educativo del Centro) sobre el rol coordinador en planificación?',
+                options: [
+                    { text: 'El coordinador lidera diagnóstico pedagógico, participa en diseño de metas y supervisa implementación de planes de mejora', correct: true, justification: 'El PEC identifica al coordinador como líder pedagógico clave. Su diagnóstico e implementación son críticos.' },
+                    { text: 'El coordinador solo ejecuta lo que director diseña', correct: false, justification: 'El coordinador tiene rol protagónico en liderazgo pedagógico del PEC, no pasivo.' },
+                    { text: 'Sin responsabilidad en diagnóstico', correct: false, justification: 'El diagnóstico pedagógico es responsabilidad central del coordinador.' },
+                    { text: 'Planes sin participación coordinador', correct: false, justification: 'El coordinador es esencial en diseño de planes pedagógicos.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es la diferencia entre supervisión y acompañamiento según conceptos MINERD?',
+                options: [
+                    { text: 'Supervisión: verificación de cumplimiento | Acompañamiento: apoyo para mejora continua de práctica pedagógica', correct: true, justification: 'Aunque relacionados, son diferentes. Ambos son necesarios: supervisión verifica, acompañamiento mejora.' },
+                    { text: 'Son términos sinónimos sin diferencia', correct: false, justification: 'Tienen énfasis diferentes. Confundirlos reduce efectividad.' },
+                    { text: 'Supervisión es apoyo y acompañamiento es punitivo', correct: false, justification: 'Es lo opuesto. Acompañamiento es apoyo; supervisión verifica.' },
+                    { text: 'Solo supervisión, sin acompañamiento', correct: false, justification: 'Ambas son necesarias. Solo supervisión sin apoyo es incompleto.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué requisitos debe cumplir una evaluación de desempeño docente según OD 18/2025?',
+                options: [
+                    { text: 'Objetividad, criterios claros, múltiples fuentes de evidencia, transparencia y oportunidad de respuesta del docente', correct: true, justification: 'La OD 18/2025 requiere estos estándares. Garantizan validez, justicia y legalidad de evaluaciones.' },
+                    { text: 'Basarse en impresiones del coordinador', correct: false, justification: 'Debe ser objetiva con evidencia. Las impresiones personales no son válidas.' },
+                    { text: 'Criterios secretos que el docente no conoce', correct: false, justification: 'La transparencia es obligatoria. El docente debe conocer criterios previos.' },
+                    { text: 'Sin documentación de observaciones', correct: false, justification: 'La documentación es esencial para validez legal y para que docente tenga derecho a revisarla.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es el papel del coordinador en procesos de inclusión educativa según normativas MINERD?',
+                options: [
+                    { text: 'Coordinar con orientadores y especialistas para adaptar pedagogía, monitorear inclusión y reportar avances-dificultades', correct: true, justification: 'El coordinador es clave en inclusión. Debe asegurar que docentes adapten estrategias para estudiantes diversos.' },
+                    { text: 'Solo derivar estudiantes con dificultades a otros servicios', correct: false, justification: 'Derivación sin trabajo coordinado con el docente es incompleto. El coordinador facilita adaptación.' },
+                    { text: 'Asumir que docentes saben adaptar sin apoyo', correct: false, justification: 'Necesitas capacitar y acompañar a docentes en estrategias inclusivas.' },
+                    { text: 'Separar estudiantes con dificultades sin intentar inclusión', correct: false, justification: 'La inclusión es derecho. Se debe intentar adaptación antes de separación.' }
+                ]
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let answers = {};
+        let shuffledQuestions = [];
+        let quizStartTime = null;
+        let timerInterval = null;
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function shuffleOptions(question) {
+            const correct = question.options.find(o => o.correct);
+            const incorrect = question.options.filter(o => !o.correct);
+            return shuffleArray([correct, ...incorrect]);
+        }
+        
+        function startQuiz() {
+            const coordinadorName = document.getElementById('coordinadorName').value.trim();
+            if (!coordinadorName) {
+                alert('Por favor ingresa tu nombre completo para iniciar el simulador.');
+                return;
+            }
+            
+            document.getElementById('welcomeSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            
+            shuffledQuestions = shuffleArray(questions).slice(0, 25);
+            shuffledQuestions.forEach(q => {
+                q.displayOptions = shuffleOptions(q);
+            });
+            
+            document.getElementById('totalQuestions').textContent = shuffledQuestions.length;
+            
+            quizStartTime = Date.now();
+            startTimer();
+            showQuestion();
+        }
+        
+        function startTimer() {
+            const totalSeconds = 40 * 60;
+            document.getElementById('timerDisplay').style.display = 'inline-block';
+            
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                const remaining = totalSeconds - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerDisplay = document.getElementById('timeRemaining');
+                timerDisplay.textContent = timeStr;
+                
+                if (remaining <= 300) {
+                    timerDisplay.parentElement.classList.add('warning');
+                }
+            }, 1000);
+        }
+        
+        function showQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            
+            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / shuffledQuestions.length * 100) + '%';
+            
+            const typeTag = document.getElementById('typeTag');
+            if (question.type === 'scenario') {
+                typeTag.className = 'question-type scenario';
+                typeTag.textContent = 'ESCENARIO PRÁCTICO';
+            } else {
+                typeTag.className = 'question-type';
+                typeTag.textContent = 'MARCO LEGAL / COMPETENCIAS';
+            }
+            
+            document.getElementById('questionText').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.displayOptions.forEach((option, index) => {
+                const optionElement = document.createElement('label');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                    <span class="option-label">${option.text}</span>
+                `;
+                
+                optionElement.addEventListener('change', () => {
+                    answers[currentQuestion] = index;
+                    updateProgressCount();
+                    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('btnPrevious').disabled = currentQuestion === 0;
+            document.getElementById('btnNext').textContent = currentQuestion === shuffledQuestions.length - 1 ? 'Finalizar simulador →' : 'Siguiente pregunta →';
+            
+            updateProgressCount();
+        }
+        
+        function updateProgressCount() {
+            const answered = Object.keys(answers).length;
+            document.getElementById('answeredCount').textContent = answered;
+        }
+        
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < shuffledQuestions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const results = [];
+            
+            shuffledQuestions.forEach((question, index) => {
+                const selectedIndex = answers[index];
+                const isCorrect = selectedIndex !== undefined && question.displayOptions[selectedIndex].correct;
+                
+                if (isCorrect) {
+                    score += 2;
+                }
+                
+                results.push({
+                    question: question.text,
+                    selectedIndex,
+                    options: question.displayOptions,
+                    correct: isCorrect,
+                    type: question.type
+                });
+            });
+            
+            const percentage = Math.round((score / 50) * 100);
+            const approved = score >= 35;
+            
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalPercentage').textContent = percentage + '%';
+            
+            const statusEl = document.getElementById('resultStatus');
+            if (approved) {
+                statusEl.className = 'result-status approved';
+                statusEl.innerHTML = '<strong>✓ Simulación aprobada</strong><p>¡Excelente! Has alcanzado el puntaje mínimo de 35 puntos (70%). Demuestras preparación sólida para la evaluación EDD de coordinadores.</p>';
+            } else {
+                statusEl.className = 'result-status not-approved';
+                statusEl.innerHTML = '<strong>✗ Simulación no aprobada</strong><p>Necesitas reforzar conocimientos sobre roles y competencias de coordinadores docentes, marcos legales y acompañamiento pedagógico. Revisa la retroalimentación a continuación.</p>';
+            }
+            
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            feedbackContainer.innerHTML = '<h3 class="feedback-title">Retroalimentación de respuestas</h3>';
+            
+            results.forEach((result, index) => {
+                const selectedOption = result.selectedIndex !== undefined ? result.options[result.selectedIndex] : null;
+                const correctOption = result.options.find(o => o.correct);
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = `answer-item ${result.correct ? 'correct' : 'incorrect'}`;
+                
+                let html = `
+                    <div class="question-number">Pregunta ${index + 1} - ${result.type === 'scenario' ? 'Escenario Práctico' : 'Marco Legal/Competencias'}</div>
+                    <div class="question-text">${result.question}</div>
+                `;
+                
+                if (result.selectedIndex !== undefined) {
+                    html += `<div class="your-answer"><strong>Tu respuesta:</strong> ${selectedOption.text}</div>`;
+                } else {
+                    html += `<div class="your-answer"><strong>No respondida</strong></div>`;
+                }
+                
+                if (!result.correct) {
+                    html += `<div class="correct-answer"><strong>Respuesta correcta:</strong> ${correctOption.text}</div>`;
+                }
+                
+                html += `<div class="justification"><strong>Justificación:</strong> ${correctOption.justification}</div>`;
+                
+                itemEl.innerHTML = html;
+                feedbackContainer.appendChild(itemEl);
+            });
+            
+            document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            shuffledQuestions = [];
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('welcomeSection').classList.remove('hidden');
+            document.getElementById('coordinadorName').value = '';
+            document.getElementById('coordinadorName').focus();
+        }
+    </script>
+</body>
+</html>

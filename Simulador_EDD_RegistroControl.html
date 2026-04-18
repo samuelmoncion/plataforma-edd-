@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador EDD - Coordinadores de Registro y Control Académico</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a4d7a 0%, #2d7ab8 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffc107;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+        
+        .logo-text {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.85;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #1a4d7a;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #1a4d7a;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .info-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a4d7a;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a4d7a;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a4d7a;
+            box-shadow: 0 0 0 3px rgba(26, 77, 122, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1a4d7a 0%, #2d7ab8 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 77, 122, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .quiz-section {
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #0084d4, #0099ff);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .question-counter {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a4d7a;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .question-type {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1a4d7a;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-type.procedure {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .option:hover {
+            background: #f8f9fa;
+            border-color: #1a4d7a;
+        }
+        
+        .option input[type="radio"] {
+            margin-top: 2px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            accent-color: #1a4d7a;
+        }
+        
+        .option.selected {
+            background: #e3f2fd;
+            border-color: #1a4d7a;
+        }
+        
+        .option-label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+        
+        .btn-previous {
+            flex: 1;
+            background: #6c757d;
+        }
+        
+        .btn-next {
+            flex: 1;
+        }
+        
+        .results-section {
+            text-align: center;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #1a4d7a 0%, #2d7ab8 100%);
+            color: white;
+            padding: 50px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .score-display h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .score-display .score {
+            font-size: 72px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        
+        .score-display .max-score {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 20px;
+        }
+        
+        .score-display .percentage {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .result-status {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .result-status.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result-status.not-approved {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .feedback-section {
+            text-align: left;
+            margin-top: 40px;
+        }
+        
+        .feedback-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a4d7a;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffc107;
+            padding-bottom: 10px;
+        }
+        
+        .answer-item {
+            background: #f8f9fa;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct {
+            border-left-color: #28a745;
+        }
+        
+        .answer-item.incorrect {
+            border-left-color: #dc3545;
+        }
+        
+        .answer-item .question-number {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .answer-item .question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a4d7a;
+            margin-bottom: 10px;
+        }
+        
+        .answer-item .your-answer {
+            padding: 10px;
+            background: white;
+            border-left: 2px solid #dc3545;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #dc3545;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct .your-answer {
+            border-left-color: #28a745;
+            color: #28a745;
+        }
+        
+        .answer-item .correct-answer {
+            padding: 10px;
+            background: #d4edda;
+            border-left: 2px solid #28a745;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #155724;
+            border-radius: 4px;
+        }
+        
+        .answer-item .justification {
+            padding: 10px;
+            background: #e3f2fd;
+            border-left: 2px solid #1a4d7a;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #1a4d7a;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+        
+        .restart-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .timer {
+            display: inline-block;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .timer.warning {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-previous {
+                margin-right: 0;
+            }
+            
+            .score-display .score {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-text">REPÚBLICA DOMINICANA - MINISTERIO DE EDUCACIÓN</div>
+            <h1>Simulador EDD</h1>
+            <p><strong>Evaluación del Desempeño Docente</strong></p>
+            <p style="font-size: 12px; margin-top: 8px;">Coordinadores de Registro y Control Académico</p>
+        </div>
+        
+        <div class="content">
+            <div id="welcomeSection">
+                <div class="info-box">
+                    <strong>Simulador preparatorio — Coordinadores de Registro y Control Académico</strong>
+                    <p style="margin-top: 12px;">Diseñado para coordinadores que gestionan registros académicos, calificaciones, datos de desempeño y reportes a MINERD. Basado en Ley 66-97, Orden Departamental 18/2025, normativas de evaluación y Estándares de Integridad de Datos.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nombre completo del/la coordinador/a</label>
+                    <input type="text" id="coordinadorName" placeholder="Ej: Juan Pérez López" required>
+                </div>
+                
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                    <h3 style="color: #1a4d7a; margin-bottom: 15px; font-size: 16px;">Información del Simulador</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Total de ítems</label>
+                            <div class="value">25</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Escala</label>
+                            <div class="value">50 pts</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Procedimientos/casos</label>
+                            <div class="value">15</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Normativas/integridad</label>
+                            <div class="value">10</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Tiempo total</label>
+                            <div class="value">40 min</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Puntaje mínimo</label>
+                            <div class="value">35 pts (70%)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startQuiz()">Iniciar Simulador EDD</button>
+            </div>
+            
+            <div id="quizSection" class="hidden quiz-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div id="timerDisplay" class="timer" style="display: none;">
+                        ⏱ <span id="timeRemaining">40:00</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="question-counter">
+                    Pregunta <span id="currentQuestion">1</span> de <span id="totalQuestions">25</span>
+                </div>
+                
+                <div id="typeTag" class="question-type"></div>
+                <div id="questionText" class="question-text"></div>
+                
+                <div class="options" id="optionsContainer"></div>
+                
+                <div class="button-group">
+                    <button class="btn btn-previous btn-disabled" id="btnPrevious" onclick="previousQuestion()" disabled>← Pregunta anterior</button>
+                    <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">Siguiente pregunta →</button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <p style="font-size: 13px; color: #666; margin: 0;">
+                        Se han respondido <strong id="answeredCount">0</strong> de 25 preguntas
+                    </p>
+                </div>
+            </div>
+            
+            <div id="resultsSection" class="hidden results-section">
+                <div class="score-display">
+                    <h2>Resultado de tu simulación</h2>
+                    <div class="max-score">Sobre 50 puntos</div>
+                    <div class="score" id="finalScore">0</div>
+                    <div class="percentage" id="finalPercentage">0%</div>
+                </div>
+                
+                <div id="resultStatus" class="result-status"></div>
+                
+                <div class="feedback-section" id="feedbackContainer"></div>
+                
+                <div class="restart-section">
+                    <button class="btn" onclick="restartQuiz()">Realizar otro simulador</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            // PROCEDIMIENTOS Y CASOS (15)
+            {
+                type: 'procedure',
+                text: 'Un docente reporta error en registro de calificación de un estudiante hace dos meses. ¿Cuál es el procedimiento correcto?',
+                options: [
+                    { text: 'Documentar solicitud, verificar error, justificar cambio, obtener firma del docente, director y afectado, actualizar registros', correct: true, justification: 'Cualquier corrección debe documentarse completamente con justificación y firmas. Esto es obligatorio para integridad y trazabilidad.' },
+                    { text: 'Cambiar la calificación sin documentar', correct: false, justification: 'Eso violaría integridad de registros. Todo cambio debe ser trazable.' },
+                    { text: 'Rechazar sin investigar', correct: false, justification: 'Debes investigar si el error es válido. Los errores justificados deben corregirse.' },
+                    { text: 'Reportar al docente a dirección sin resolver primero', correct: false, justification: 'Intenta resolución técnica primero. El reporte es si hay fraude intencional.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Descubres inconsistencias entre calificaciones en acta de grado y sistema de registro. ¿Cuál es tu acción?',
+                options: [
+                    { text: 'Auditoría: revisar todas las fuentes, identificar discrepancia, documentar hallazgos y comunicar a director', correct: true, justification: 'Las inconsistencias requieren auditoría sistemática. Documentar y comunicar es esencial para resolver discrepancias.' },
+                    { text: 'Asumir que el sistema es correcto sin verificar', correct: false, justification: 'Debes comparar todas las fuentes. Los sistemas pueden tener errores.' },
+                    { text: 'Ignorar la inconsistencia', correct: false, justification: 'Las inconsistencias comprometen integridad académica. Requieren atención.' },
+                    { text: 'Cambiar los registros "para que coincidan"', correct: false, justification: 'Debes investigar cuál es la fuente correcta, no simplemente emparejar números.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Te solicitan reporte analítico de desempeño académico por docente. ¿Qué información incluyes?',
+                options: [
+                    { text: 'Promedio general, distribución de calificaciones, estudiantes con riesgo, tendencias y análisis comparativo',correct: true, justification: 'Un reporte analítico útil incluye múltiples indicadores. Esto permite identificar fortalezas, riesgos y patrones.' },
+                    { text: 'Solo listado de calificaciones sin análisis', correct: false, justification: 'Eso es data sin información. El análisis añade valor.' },
+                    { text: 'Opiniones personales sin datos', correct: false, justification: 'Los reportes deben basarse en datos cuantitativos, no opiniones.' },
+                    { text: 'Sin información sobre estudiantes en riesgo', correct: false, justification: 'Identificar estudiantes con dificultad es parte clave del análisis académico.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Un padre solicita ver historial académico de su hijo. ¿Cuál es el procedimiento?',
+                options: [
+                    { text: 'Verificar identidad, solicitar autorización escrita del estudiante (si es mayor) o padre, entregar copia certificada',correct: true, justification: 'La privacidad de registros es derecho. Debes verificar identidad, obtener consentimiento y entregar copia oficial.' },
+                    { text: 'Entregar información sin verificación', correct: false, justification: 'Debes confirmar que realmente es el padre/tutor. La privacidad es importante.' },
+                    { text: 'Negar acceso al historial académico', correct: false, justification: 'Los padres/tutores tienen derecho a ver registros académicos de sus hijos.' },
+                    { text: 'Compartir información con terceros sin consentimiento', correct: false, justification: 'La privacidad de registros es obligatoria. Solo con consentimiento se comparte.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Necesitas preparar un reporte de calificaciones finales para enviar a MINERD. ¿Qué verificaciones haces?',
+                options: [
+                    { text: 'Validación de datos: completitud, rango de calificaciones, cálculos de promedio, ausencias y cambios últimos',correct: true, justification: 'Antes de enviar a MINERD, debes garantizar calidad de datos. Validación completa es obligatoria.' },
+                    { text: 'Enviar directamente sin verificación', correct: false, justification: 'Los datos incorrectos a MINERD tienen consecuencias graves. Debe verificarse todo.' },
+                    { text: 'Solo revisar visualmente sin algoritmos de validación', correct: false, justification: 'Necesitas validaciones sistemáticas, no solo visual. Los algoritmos detectan errores.' },
+                    { text: 'Ignorar datos incompletos', correct: false, justification: 'Los datos incompletos o inválidos deben ser resueltos antes del reporte.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Un docente quiere cambiar varias calificaciones diciendo que "cometió errores en cálculo". ¿Cuál es tu enfoque?',
+                options: [
+                    { text: 'Solicitar explicación detallada, revisar evidencia (exámenes), documentar justificación y proceder con protocolo de corrección',correct: true, justification: 'Los cambios de calificación requieren justificación documentada y verificable. Debes revisar la evidencia.' },
+                    { text: 'Aceptar sin verificar porque confías en el docente', correct: false, justification: 'Incluso si confías, los cambios requieren verificación. Es protocolo, no desconfianza.' },
+                    { text: 'Rechazar todos los cambios sin investigar', correct: false, justification: 'Si hay errores válidos, deben corregirse. La investigación es clave.' },
+                    { text: 'Hacer cambios sin documentar', correct: false, justification: 'Todo cambio debe estar documentado. Sin documentación, pierde validez.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Te notas que estudiantes que reprobaron aparecen como "promocionados" en sistema. ¿Qué haces?',
+                options: [
+                    { text: 'Auditoría completa: revisar criterios de promoción, verificar datos en sistema y actas, reportar a dirección',correct: true, justification: 'Un error así es grave. Requiere auditoría completa para identificar causa (error humano, sistema, etc.).' },
+                    { text: 'Asumir error del sistema y cambiar manualmente', correct: false, justification: 'Antes de cambiar, investiga la causa. Cambios sin causa documentada crean problemas.' },
+                    { text: 'Ignorar pensando que se resolverá solo', correct: false, justification: 'Estos errores no se resuelven solos. Requieren intervención inmediata.' },
+                    { text: 'Culpar al docente sin investigar', correct: false, justification: 'Primero investiga la fuente del error antes de asignar responsabilidad.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Necesitas auditar integridad de registros de todo un semestre. ¿Cuál es tu metodología?',
+                options: [
+                    { text: 'Revisar consistencia interno-sistema, validar cálculos de promedios, comparar con documentos fuente y documentar hallazgos',correct: true, justification: 'Una auditoría completa requiere validación múltiple. Esto detecta discrepancias y garantiza integridad.' },
+                    { text: 'Solo revisar visualmente algunos registros', correct: false, justification: 'Una auditoría requiere sistematicidad y alcance completo, no muestreo casual.' },
+                    { text: 'Confiar en que todo está correcto sin verificación', correct: false, justification: 'Los errores pueden existir sin apariencia obvia. Auditoría detallada es necesaria.' },
+                    { text: 'Hacer auditoría pero no documentar resultados', correct: false, justification: 'La documentación de auditoría es esencial. Sin ella, no hay trazabilidad.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Una estudiante fue evaluada antes de incorporarse oficialmente al centro. ¿Cuál es el procedimiento para validar su participación?',
+                options: [
+                    { text: 'Verificar fecha de matrícula oficial vs. fecha de evaluación, ajustar registros si hay incongruencia documentada',correct: true, justification: 'Solo pueden evaluarse estudiantes matriculados. Si hay incongruencia, debe ajustarse con documentación.' },
+                    { text: 'Aceptar la evaluación aunque no estuviera matriculada', correct: false, justification: 'Estudiantes no matriculados no deben ser evaluados formalmente.' },
+                    { text: 'Eliminar todos sus registros sin investigación', correct: false, justification: 'Investiga primero. Si hay error administrativo, debe corregirse, no eliminarse.' },
+                    { text: 'Reportar al docente como incompetente', correct: false, justification: 'Puede ser error administrativo. Investiga la causa antes de atribuir responsabilidad.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Recibes solicitud de acceso a datos académicos de estudiantes para investigación educativa. ¿Cuál es el procedimiento?',
+                options: [
+                    { text: 'Solicitar protocolo de investigación, autorización de dirección, consentimiento informado y cuidar confidencialidad',correct: true, justification: 'El acceso a datos requiere protocolo formal. Confidencialidad y consentimiento son obligatorios.' },
+                    { text: 'Entregar datos sin más procedimiento', correct: false, justification: 'La privacidad académica es derecho. Requiere proceso formal y consentimiento.' },
+                    { text: 'Rechazar toda solicitud sin evaluar mérito', correct: false, justification: 'Solicitudes legítimas pueden aprobarse con datos anonimizados y protecciones.' },
+                    { text: 'Compartir nombres y números de estudiantes libremente', correct: false, justification: 'Eso viola privacidad. Los datos deben ser anonimizados o con consentimiento.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Detectas que un docente entregó calificaciones con muchos decimales (ej: 88.7345) en lugar de enteros. ¿Cómo procedes?',
+                options: [
+                    { text: 'Comunicar al docente el formato correcto, solicitar corrección documentada y establecer protocolo claro futuro',correct: true, justification: 'El formato de calificaciones debe ser estándar. Comunica expectativas y protocolo claro.' },
+                    { text: 'Cambiar todos los registros sin consultar al docente', correct: false, justification: 'Consulta primero. El docente necesita entender el protocolo correcto.' },
+                    { text: 'Aceptar cualquier formato que entregue el docente', correct: false, justification: 'Los estándares de formato son importantes para integridad de datos.' },
+                    { text: 'Reportar al docente como incompetente', correct: false, justification: 'Puede ser falta de orientación. Capacita antes de reportar.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'El sistema se cae días antes de enviar reporte a MINERD y pierdes datos recientes. ¿Cuál es tu plan?',
+                options: [
+                    { text: 'Recuperar desde respaldos de seguridad, verificar integridad de datos y comunicar a dirección sobre el incidente',correct: true, justification: 'Los respaldos son esenciales. Comunica el incidente y verifica integridad antes de reportar.' },
+                    { text: 'Inventar datos para completar el reporte', correct: false, justification: 'Eso es fraude. Debes reportar lo que realmente existe, no inventar.' },
+                    { text: 'Enviar reporte incompleto sin explicación', correct: false, justification: 'Comunica el incidente a MINERD y director. Transparencia es clave.' },
+                    { text: 'Intentar recuperar manualmente sin respaldos', correct: false, justification: 'Los respaldos son para esto. Usalos para recuperación confiable.' }
+                ]
+            },
+            {
+                type: 'procedure',
+                text: 'Estudiante fue evaluado en dos asignaturas por error (lista duplicada). ¿Cuál es el procedimiento de corrección?',
+                options: [
+                    { text: 'Identificar error, documentar causa, corregir registros con justificación y notificar a docente y director',correct: true, justification: 'Los errores administrativos deben corregirse con documentación clara de la causa.' },
+                    { text: 'Dejar ambas evaluaciones "por si acaso"', correct: false, justification: 'Eso crea inconsistencias. Debe corregirse al estado correcto.' },
+                    { text: 'Cambiar registros sin documentar', correct: false, justification: 'Toda corrección requiere documentación de causa y justificación.' },
+                    { text: 'Responsabilizar al docente sin investigación', correct: false, justification: 'Investiga primero. El error puede ser administrativo.' }
+                ]
+            },
+            
+            // NORMATIVAS E INTEGRIDAD (10)
+            {
+                type: 'legal',
+                text: '¿Cuál es la responsabilidad principal del Coordinador de Registro y Control Académico según Ley 66-97?',
+                options: [
+                    { text: 'Garantizar integridad, seguridad y confiabilidad de registros académicos del centro', correct: true, justification: 'La Ley 66-97 establece esto como responsabilidad central. Los registros son documentos oficiales.' },
+                    { text: 'Solo archivar registros sin verificación', correct: false, justification: 'Es mucho más activo. Requiere validación continua.' },
+                    { text: 'Cambiar calificaciones según conveniencia', correct: false, justification: 'La integridad significa NO alterarlos sin justificación formal.' },
+                    { text: 'Compartir información académica libremente', correct: false, justification: 'La confidencialidad es parte de la responsabilidad.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece la normativa sobre corrección de calificaciones en registros académicos?',
+                options: [
+                    { text: 'Solo pueden corregirse con justificación documentada, autorización de docente y director, y firma de responsables',correct: true, justification: 'La normativa es clara: trazabilidad total. Sin esto, las correcciones pierden validez.' },
+                    { text: 'Pueden corregirse sin restricciones', correct: false, justification: 'Las correcciones requieren protocolo estricto.' },
+                    { text: 'Una vez registrado, es inmutable', correct: false, justification: 'Los errores legítimos pueden corregirse, pero con protocolo.' },
+                    { text: 'Solo el director puede autorizar cambios', correct: false, justification: 'Requiere múltiples autoridades y documentación.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuáles son los componentes de la Integridad de Datos Académicos según MINERD?',
+                options: [
+                    { text: 'Exactitud, completitud, consistencia, confidencialidad, disponibilidad y trazabilidad documentada',correct: true, justification: 'Estos 6 componentes definen integridad de datos. Todos son necesarios.' },
+                    { text: 'Solo guardar registros en archivos', correct: false, justification: 'La integridad va más allá de almacenamiento. Incluye validación y seguridad.' },
+                    { text: 'Sin necesidad de respaldos de seguridad', correct: false, justification: 'Los respaldos son parte esencial de la disponibilidad de datos.' },
+                    { text: 'Sin confidencialidad ni privacidad', correct: false, justification: 'La confidencialidad es componente obligatorio.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué protocolo establece la OD 18/2025 para reporte de datos de desempeño docente?',
+                options: [
+                    { text: 'Datos validados, análisis contextual, confidencialidad de identificadores y uso formativo de información',correct: true, justification: 'La OD enfatiza que datos deben ser válidos y usarse para mejorar, no castigar.' },
+                    { text: 'Reporte sin validación previa', correct: false, justification: 'Los datos deben estar validados antes de reportar.' },
+                    { text: 'Publicación abierta de identidades y desempeños', correct: false, justification: 'La confidencialidad es clave. No se expone públicamente.' },
+                    { text: 'Uso punitivo de datos de desempeño', correct: false, justification: 'Los datos deben usarse formativamente para mejora.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué derechos tiene un estudiante respecto a sus registros académicos según normativas dominicanas?',
+                options: [
+                    { text: 'Acceso a su información, confidencialidad de sus datos, rectificación de errores y protección de privacidad',correct: true, justification: 'Estos derechos están protegidos. Los estudiantes (o padres) pueden acceder y rectificar.' },
+                    { text: 'No tienen derechos sobre sus propios registros', correct: false, justification: 'Los estudiantes tienen derechos fundamentales sobre sus datos.' },
+                    { text: 'La institución puede compartir información sin consentimiento', correct: false, justification: 'La privacidad es derecho protegido.' },
+                    { text: 'No pueden solicitar correcciones', correct: false, justification: 'Los errores pueden rectificarse con justificación.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es la responsabilidad del Coordinador ante posible fraude académico en registros?',
+                options: [
+                    { text: 'Investigar, documentar evidencia, reportar a dirección e informar a autoridades si corresponde',correct: true, justification: 'El fraude es grave. Requiere investigación rigurosa y reporte formal.' },
+                    { text: 'Ignorar por "no causar problemas"', correct: false, justification: 'El fraude compromete la credibilidad institucional. Debe atenderse.' },
+                    { text: 'Encubrirlo si es docente conocido', correct: false, justification: 'La integridad no tiene excepciones. Todos son iguales ante el reglamento.' },
+                    { text: 'Castigar sin pruebas', correct: false, justification: 'Necesitas investigación sólida antes de cualquier acción.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece la ley sobre confidencialidad de datos de estudiantes con situaciones especiales (discapacidad, etc.)?',
+                options: [
+                    { text: 'Máxima confidencialidad: solo acceso a equipo directo, documentación segregada y consentimiento informado',correct: true, justification: 'Los datos sensibles requieren protecciones extra. La privacidad es derecho fundamental.' },
+                    { text: 'Información pública sin restricción', correct: false, justification: 'Eso violaría dignidad y privacidad.' },
+                    { text: 'Compartir con todos los docentes sin límite', correct: false, justification: 'Solo quienes necesitan conocer por razones pedagógicas.' },
+                    { text: 'Sin protecciones especiales', correct: false, justification: 'Justamente requiere protecciones más estrictas.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es el período de retención de registros académicos según normativas MINERD?',
+                options: [
+                    { text: 'Mínimo 5 años; ampliado si hay reclamos pendientes o carrera universitaria en curso del estudiante',correct: true, justification: 'Este período asegura disponibilidad para verificaciones y reclamos futuros.' },
+                    { text: 'Solo mientras el estudiante está en el centro', correct: false, justification: 'Los registros deben guardarse más allá de graduación.' },
+                    { text: 'Sin límite indefinido', correct: false, justification: 'Aunque existe mínimo legal, la institución establece política.' },
+                    { text: 'Pueden eliminarse cuando se completa la evaluación', correct: false, justification: 'Deben guardarse por ley durante el período mínimo.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué responsabilidades tiene el Coordinador de Registros en la seguridad de datos (física y digital)?',
+                options: [
+                    { text: 'Control de acceso, respaldos periódicos, protección contra alteración y planes contingencia ante desastres',correct: true, justification: 'La seguridad es responsabilidad compartida. Debes tomar medidas técnicas y físicas.' },
+                    { text: 'Solo guardar en carpetas sin protección', correct: false, justification: 'Eso es inseguro. Requiere controles de acceso y respaldos.' },
+                    { text: 'Sin necesidad de respaldos digitales', correct: false, justification: 'Los respaldos son esenciales para disponibilidad de datos.' },
+                    { text: 'La seguridad es solo responsabilidad de IT', correct: false, justification: 'Aunque IT ayuda, tú como coordinador tienes responsabilidad.' }
+                ]
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let answers = {};
+        let shuffledQuestions = [];
+        let quizStartTime = null;
+        let timerInterval = null;
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function shuffleOptions(question) {
+            const correct = question.options.find(o => o.correct);
+            const incorrect = question.options.filter(o => !o.correct);
+            return shuffleArray([correct, ...incorrect]);
+        }
+        
+        function startQuiz() {
+            const coordinadorName = document.getElementById('coordinadorName').value.trim();
+            if (!coordinadorName) {
+                alert('Por favor ingresa tu nombre completo para iniciar el simulador.');
+                return;
+            }
+            
+            document.getElementById('welcomeSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            
+            shuffledQuestions = shuffleArray(questions).slice(0, 25);
+            shuffledQuestions.forEach(q => {
+                q.displayOptions = shuffleOptions(q);
+            });
+            
+            document.getElementById('totalQuestions').textContent = shuffledQuestions.length;
+            
+            quizStartTime = Date.now();
+            startTimer();
+            showQuestion();
+        }
+        
+        function startTimer() {
+            const totalSeconds = 40 * 60;
+            document.getElementById('timerDisplay').style.display = 'inline-block';
+            
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                const remaining = totalSeconds - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerDisplay = document.getElementById('timeRemaining');
+                timerDisplay.textContent = timeStr;
+                
+                if (remaining <= 300) {
+                    timerDisplay.parentElement.classList.add('warning');
+                }
+            }, 1000);
+        }
+        
+        function showQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            
+            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / shuffledQuestions.length * 100) + '%';
+            
+            const typeTag = document.getElementById('typeTag');
+            if (question.type === 'procedure') {
+                typeTag.className = 'question-type procedure';
+                typeTag.textContent = 'PROCEDIMIENTO / CASO';
+            } else {
+                typeTag.className = 'question-type';
+                typeTag.textContent = 'NORMATIVA / INTEGRIDAD DATOS';
+            }
+            
+            document.getElementById('questionText').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.displayOptions.forEach((option, index) => {
+                const optionElement = document.createElement('label');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                    <span class="option-label">${option.text}</span>
+                `;
+                
+                optionElement.addEventListener('change', () => {
+                    answers[currentQuestion] = index;
+                    updateProgressCount();
+                    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('btnPrevious').disabled = currentQuestion === 0;
+            document.getElementById('btnNext').textContent = currentQuestion === shuffledQuestions.length - 1 ? 'Finalizar simulador →' : 'Siguiente pregunta →';
+            
+            updateProgressCount();
+        }
+        
+        function updateProgressCount() {
+            const answered = Object.keys(answers).length;
+            document.getElementById('answeredCount').textContent = answered;
+        }
+        
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < shuffledQuestions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const results = [];
+            
+            shuffledQuestions.forEach((question, index) => {
+                const selectedIndex = answers[index];
+                const isCorrect = selectedIndex !== undefined && question.displayOptions[selectedIndex].correct;
+                
+                if (isCorrect) {
+                    score += 2;
+                }
+                
+                results.push({
+                    question: question.text,
+                    selectedIndex,
+                    options: question.displayOptions,
+                    correct: isCorrect,
+                    type: question.type
+                });
+            });
+            
+            const percentage = Math.round((score / 50) * 100);
+            const approved = score >= 35;
+            
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalPercentage').textContent = percentage + '%';
+            
+            const statusEl = document.getElementById('resultStatus');
+            if (approved) {
+                statusEl.className = 'result-status approved';
+                statusEl.innerHTML = '<strong>✓ Simulación aprobada</strong><p>¡Excelente! Dominas procedimientos de registros académicos e integridad de datos. Estás preparado/a para la evaluación EDD.</p>';
+            } else {
+                statusEl.className = 'result-status not-approved';
+                statusEl.innerHTML = '<strong>✗ Simulación no aprobada</strong><p>Necesitas reforzar conocimientos sobre normativas de registros, integridad de datos y procedimientos administrativos. Revisa la retroalimentación a continuación.</p>';
+            }
+            
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            feedbackContainer.innerHTML = '<h3 class="feedback-title">Retroalimentación de respuestas</h3>';
+            
+            results.forEach((result, index) => {
+                const selectedOption = result.selectedIndex !== undefined ? result.options[result.selectedIndex] : null;
+                const correctOption = result.options.find(o => o.correct);
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = `answer-item ${result.correct ? 'correct' : 'incorrect'}`;
+                
+                let html = `
+                    <div class="question-number">Pregunta ${index + 1} - ${result.type === 'procedure' ? 'Procedimiento/Caso' : 'Normativa/Integridad'}</div>
+                    <div class="question-text">${result.question}</div>
+                `;
+                
+                if (result.selectedIndex !== undefined) {
+                    html += `<div class="your-answer"><strong>Tu respuesta:</strong> ${selectedOption.text}</div>`;
+                } else {
+                    html += `<div class="your-answer"><strong>No respondida</strong></div>`;
+                }
+                
+                if (!result.correct) {
+                    html += `<div class="correct-answer"><strong>Respuesta correcta:</strong> ${correctOption.text}</div>`;
+                }
+                
+                html += `<div class="justification"><strong>Justificación:</strong> ${correctOption.justification}</div>`;
+                
+                itemEl.innerHTML = html;
+                feedbackContainer.appendChild(itemEl);
+            });
+            
+            document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            shuffledQuestions = [];
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('welcomeSection').classList.remove('hidden');
+            document.getElementById('coordinadorName').value = '';
+            document.getElementById('coordinadorName').focus();
+        }
+    </script>
+</body>
+</html>

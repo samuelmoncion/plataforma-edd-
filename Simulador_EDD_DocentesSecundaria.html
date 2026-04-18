@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador EDD - Docentes de Secundaria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #d84315 0%, #ff6e40 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffc107;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+        
+        .logo-text {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.85;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .info-box {
+            background: #ffebee;
+            border-left: 4px solid #d84315;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #d84315;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .info-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #d84315;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #d84315;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #d84315;
+            box-shadow: 0 0 0 3px rgba(216, 67, 21, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #d84315 0%, #ff6e40 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(216, 67, 21, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .quiz-section {
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #ff6e40, #ffb74d);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .question-counter {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #d84315;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .question-type {
+            display: inline-block;
+            background: #ffebee;
+            color: #d84315;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-type.methodology {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .option:hover {
+            background: #f8f9fa;
+            border-color: #d84315;
+        }
+        
+        .option input[type="radio"] {
+            margin-top: 2px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            accent-color: #d84315;
+        }
+        
+        .option.selected {
+            background: #ffebee;
+            border-color: #d84315;
+        }
+        
+        .option-label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+        
+        .btn-previous {
+            flex: 1;
+            background: #6c757d;
+        }
+        
+        .btn-next {
+            flex: 1;
+        }
+        
+        .results-section {
+            text-align: center;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #d84315 0%, #ff6e40 100%);
+            color: white;
+            padding: 50px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .score-display h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .score-display .score {
+            font-size: 72px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        
+        .score-display .max-score {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 20px;
+        }
+        
+        .score-display .percentage {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .result-status {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .result-status.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result-status.not-approved {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .feedback-section {
+            text-align: left;
+            margin-top: 40px;
+        }
+        
+        .feedback-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #d84315;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffc107;
+            padding-bottom: 10px;
+        }
+        
+        .answer-item {
+            background: #f8f9fa;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct {
+            border-left-color: #28a745;
+        }
+        
+        .answer-item.incorrect {
+            border-left-color: #dc3545;
+        }
+        
+        .answer-item .question-number {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .answer-item .question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #d84315;
+            margin-bottom: 10px;
+        }
+        
+        .answer-item .your-answer {
+            padding: 10px;
+            background: white;
+            border-left: 2px solid #dc3545;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #dc3545;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct .your-answer {
+            border-left-color: #28a745;
+            color: #28a745;
+        }
+        
+        .answer-item .correct-answer {
+            padding: 10px;
+            background: #d4edda;
+            border-left: 2px solid #28a745;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #155724;
+            border-radius: 4px;
+        }
+        
+        .answer-item .justification {
+            padding: 10px;
+            background: #ffebee;
+            border-left: 2px solid #d84315;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #d84315;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+        
+        .restart-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .timer {
+            display: inline-block;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .timer.warning {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-previous {
+                margin-right: 0;
+            }
+            
+            .score-display .score {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-text">REPÚBLICA DOMINICANA - MINISTERIO DE EDUCACIÓN</div>
+            <h1>Simulador EDD</h1>
+            <p><strong>Evaluación del Desempeño Docente</strong></p>
+            <p style="font-size: 12px; margin-top: 8px;">Docentes de Nivel Secundario</p>
+        </div>
+        
+        <div class="content">
+            <div id="welcomeSection">
+                <div class="info-box">
+                    <strong>Simulador preparatorio — Docentes de Nivel Secundario</strong>
+                    <p style="margin-top: 12px;">Diseñado para docentes que buscan evaluar su preparación en desempeño docente, metodologías pedagógicas, evaluación de aprendizajes y marco legal. Basado en Ley 66-97, Orden Departamental 18/2025, Estándares Profesionales MINERD y Reglamento del Estatuto del Docente.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nombre completo del/la docente</label>
+                    <input type="text" id="docenteName" placeholder="Ej: Prof. Carlos Miguel González" required>
+                </div>
+                
+                <div style="background: #ffebee; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                    <h3 style="color: #d84315; margin-bottom: 15px; font-size: 16px;">Información del Simulador</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Total de ítems</label>
+                            <div class="value">25</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Escala</label>
+                            <div class="value">50 pts</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Metodologías/prácticas</label>
+                            <div class="value">15</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Marco legal/estándares</label>
+                            <div class="value">10</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Tiempo total</label>
+                            <div class="value">40 min</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Puntaje mínimo</label>
+                            <div class="value">35 pts (70%)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startQuiz()">Iniciar Simulador EDD</button>
+            </div>
+            
+            <div id="quizSection" class="hidden quiz-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div id="timerDisplay" class="timer" style="display: none;">
+                        ⏱ <span id="timeRemaining">40:00</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="question-counter">
+                    Pregunta <span id="currentQuestion">1</span> de <span id="totalQuestions">25</span>
+                </div>
+                
+                <div id="typeTag" class="question-type"></div>
+                <div id="questionText" class="question-text"></div>
+                
+                <div class="options" id="optionsContainer"></div>
+                
+                <div class="button-group">
+                    <button class="btn btn-previous btn-disabled" id="btnPrevious" onclick="previousQuestion()" disabled>← Pregunta anterior</button>
+                    <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">Siguiente pregunta →</button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <p style="font-size: 13px; color: #666; margin: 0;">
+                        Se han respondido <strong id="answeredCount">0</strong> de 25 preguntas
+                    </p>
+                </div>
+            </div>
+            
+            <div id="resultsSection" class="hidden results-section">
+                <div class="score-display">
+                    <h2>Resultado de tu simulación</h2>
+                    <div class="max-score">Sobre 50 puntos</div>
+                    <div class="score" id="finalScore">0</div>
+                    <div class="percentage" id="finalPercentage">0%</div>
+                </div>
+                
+                <div id="resultStatus" class="result-status"></div>
+                
+                <div class="feedback-section" id="feedbackContainer"></div>
+                
+                <div class="restart-section">
+                    <button class="btn" onclick="restartQuiz()">Realizar otro simulador</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            // METODOLOGÍAS Y PRÁCTICAS (15)
+            {
+                type: 'methodology',
+                text: 'Al planificar tu clase, ¿cuál es el paso más importante para garantizar aprendizaje significativo?',
+                options: [
+                    { text: 'Definir objetivos claros basados en estándares, considerando contexto del estudiante y nivel cognitivo esperado', correct: true, justification: 'Los objetivos claros guían la enseñanza. Deben ser específicos, medibles y alineados a estándares MINERD.' },
+                    { text: 'Seleccionar actividades entretenidas sin conexión clara a objetivos', correct: false, justification: 'Las actividades deben conectar a objetivos. Entretenimiento sin propósito no genera aprendizaje significativo.' },
+                    { text: 'Cubrir todo el contenido del libro de texto sin análisis', correct: false, justification: 'La cobertura de contenido no garantiza aprendizaje. Necesitas profundidad selectiva.' },
+                    { text: 'Improvisar la clase según el estado de ánimo del docente', correct: false, justification: 'La planificación es esencial. La improvisación compromete consistencia y calidad.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: '¿Cuál es el propósito pedagógico de las evaluaciones formativas en tu aula?',
+                options: [
+                    { text: 'Identificar fortalezas/debilidades del estudiante para ajustar enseñanza y proporcionar retroalimentación de mejora',correct: true, justification: 'La evaluación formativa es continua y mejora-orientada. Guía ajustes pedagógicos en tiempo real.' },
+                    { text: 'Solo asignar calificaciones finales', correct: false, justification: 'Eso sería evaluación sumativa. La formativa ocurre durante el proceso.' },
+                    { text: 'Castigar errores sin aprendizaje', correct: false, justification: 'La evaluación formativa es para aprendizaje, no castigo.' },
+                    { text: 'Sin retroalimentación al estudiante', correct: false, justification: 'La retroalimentación es parte esencial de la evaluación formativa.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: 'Un estudiante no entiende un concepto clave. Como docente, ¿cuál es tu estrategia?',
+                options: [
+                    { text: 'Diagnosticar causa (requisitos previos, método, ritmo), usar estrategia alternativa y verificar comprensión',correct: true, justification: 'El diagnóstico precede la intervención. Diferentes estudiantes aprenden diferente. Necesitas flexibilidad.' },
+                    { text: 'Repetir la misma explicación más fuerte', correct: false, justification: 'Repetición sin cambio de estrategia no mejora comprensión.' },
+                    { text: 'Asumir que "simplemente no entiende" y seguir adelante', correct: false, justification: 'Tu responsabilidad es encontrar cómo ese estudiante puede entender.' },
+                    { text: 'Reducir el contenido sin apoyo específico', correct: false, justification: 'Necesitas apoyo estratégico, no simplemente reducción.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: '¿Cómo incorporas competencias digitales en tu enseñanza?',
+                options: [
+                    { text: 'Integrar tecnología pedagógicamente cuando mejora aprendizaje, desarrollando competencias digitales en estudiantes',correct: true, justification: 'La tecnología no es fin sino medio. Debe servir a objetivos pedagógicos claramente.' },
+                    { text: 'Usar tecnología porque es "moderna" aunque no aporte pedagógicamente', correct: false, justification: 'La tecnología por la tecnología no es válida. Debe tener propósito.' },
+                    { text: 'Sin tecnología porque es "complicada"', correct: false, justification: 'Las competencias digitales son necesarias en mundo actual. Necesitas capacitarte.' },
+                    { text: 'Dar acceso sin enseñar el uso pedagógico responsable', correct: false, justification: 'Necesitas guiar en uso responsable y crítico de tecnología.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: '¿Cuál es la estrategia correcta para diferenciar la enseñanza?',
+                options: [
+                    { text: 'Adaptar contenidos, procesos y productos según necesidades y ritmos de aprendizaje de estudiantes diversos',correct: true, justification: 'La diferenciación respeta diversidad. Mismo objetivo, múltiples caminos para llegar.' },
+                    { text: 'Enseñanza igual para todos sin consideración de diferencias', correct: false, justification: 'Los estudiantes son diversos. La enseñanza única es inequitativa.' },
+                    { text: 'Reducir expectativas para estudiantes con dificultad', correct: false, justification: 'La diferenciación mantiene altas expectativas. Adapta procesos, no objetivos.' },
+                    { text: 'Sin tiempo para diferenciar porque es "mucho trabajo"', correct: false, justification: 'La diferenciación es responsabilidad docente. Requiere planificación pero es posible.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: '¿Cómo promueves pensamiento crítico en tus estudiantes de secundaria?',
+                options: [
+                    { text: 'Formular preguntas abiertas, promover análisis de fuentes múltiples, debatir perspectivas diversas',correct: true, justification: 'El pensamiento crítico se desarrolla con preguntas y análisis. Debates y fuentes múltiples son clave.' },
+                    { text: 'Solo transmitir información para memorizar', correct: false, justification: 'La memorización no es pensamiento crítico. Necesita análisis.' },
+                    { text: 'Respuestas "correctas" únicas sin debate', correct: false, justification: 'El pensamiento crítico requiere múltiples perspectivas.' },
+                    { text: 'Sin tiempo para pensamiento crítico porque debo "cubrir contenido"', correct: false, justification: 'El pensamiento crítico es contenido. Es habilidad del siglo XXI.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: '¿Cuál es el rol correcto del trabajo colaborativo en el aula?',
+                options: [
+                    { text: 'Desarrollar competencias sociales, interdependencia y aprendizaje compartido con claros objetivos y roles',correct: true, justification: 'El trabajo colaborativo no es "simplemente agrupar". Requiere estructura, objetivos y evaluación clara.' },
+                    { text: 'Agrupar estudiantes sin estructura clara de objetivos', correct: false, justification: 'Sin estructura, grupos pueden ser contraproducentes.' },
+                    { text: 'Solo trabajo individual sin colaboración', correct: false, justification: 'La colaboración es competencia esencial. Necesita desarrollarse.' },
+                    { text: 'Sin evaluación individual dentro del trabajo colaborativo', correct: false, justification: 'Necesitas evaluar tanto el proceso colaborativo como contribución individual.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: '¿Cómo manejas un estudiante que constantemente interrumpe la clase?',
+                options: [
+                    { text: 'Diagnóstico de conducta (causa), intervención privada respetuosa, establecer límites claros y positivos',correct: true, justification: 'El comportamiento tiene causa. Intervención privada y respetuosa es más efectiva que pública.' },
+                    { text: 'Expulsión inmediata de la clase', correct: false, justification: 'Eso es castigo sin intervención. El estudiante sigue sin herramientas.' },
+                    { text: 'Ignorar porque "es su personalidad"', correct: false, justification: 'El comportamiento disruptivo afecta aprendizaje de todos. Requiere intervención.' },
+                    { text: 'Humillar públicamente al estudiante', correct: false, justification: 'La humillación es contraproducente. Daña relación y aumenta conducta.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: '¿Cuál es el enfoque pedagógico para enseñar a estudiantes con necesidades educativas especiales?',
+                options: [
+                    { text: 'Evaluación diagnóstica, adaptaciones curriculares, estrategias diferenciadas e inclusión en aula regular',correct: true, justification: 'La inclusión es enfoque actual. Necesitas adaptar sin segregar. El objetivo es participación plena.' },
+                    { text: 'Separación en aula especial sin inclusión', correct: false, justification: 'La segregación es enfoque antiguo. La inclusión es derecho.' },
+                    { text: 'Sin adaptaciones pensando que se "adaptarán"', correct: false, justification: 'Sin apoyo, el estudiante fracasa. Las adaptaciones son derechos.' },
+                    { text: 'Reducción de contenidos sin apoyos adicionales', correct: false, justification: 'Necesitas apoyos, no solo reducción. Mantienen desafío pero con soportes.' }
+                ]
+            },
+            {
+                type: 'methodology',
+                text: '¿Cómo establecer relaciones positivas con tus estudiantes de secundaria?',
+                options: [
+                    { text: 'Comunicación clara y respetuosa, escucha activa, consistencia en límites y demostración de genuino interés',correct: true, justification: 'Las relaciones son base para enseñanza efectiva. La consistencia y autenticidad son clave.' },
+                    { text: 'Amistad sin límites ni autoridad', correct: false, justification: 'La amistad erosiona liderazgo. Necesitas relación profesional cálida pero con límites.' },
+                    { text: 'Distancia fría sin interés en el estudiante', correct: false, justification: 'El desinterés reduce motivación. Necesitas cuidado genuino.' },
+                    { text: 'Sarcasmo y burla para "conectar"', correct: false, justification: 'Eso daña relación. Los adolescentes son sensibles a crítica.' }
+                ]
+            },
+            
+            // MARCO LEGAL Y ESTÁNDARES (10)
+            {
+                type: 'legal',
+                text: '¿Cuáles son los Estándares Profesionales del MINERD para docentes?',
+                options: [
+                    { text: 'Conocimiento disciplinar, competencia pedagógica, competencia relacional y responsabilidad profesional',correct: true, justification: 'Estos son los 4 pilares. Definen qué es un docente competente en República Dominicana.' },
+                    { text: 'Solo dominio de contenidos', correct: false, justification: 'Es uno de varios. Necesita pedagogía, relaciones y profesionalismo.' },
+                    { text: 'Sin responsabilidad profesional moral', correct: false, justification: 'La responsabilidad ética es fundamental.' },
+                    { text: 'Sin necesidad de competencia relacional', correct: false, justification: 'Las relaciones son clave para enseñanza efectiva.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece la Ley 66-97 sobre derechos de los docentes?',
+                options: [
+                    { text: 'Estabilidad laboral, salario digno, condiciones laborales seguras, desarrollo profesional y participación en decisiones',correct: true, justification: 'La Ley 66-97 reconoce estos derechos. Son fundamentales para dignidad profesional.' },
+                    { text: 'Salario sin derecho a estabilidad', correct: false, justification: 'La estabilidad es protección básica contra despidos arbitrarios.' },
+                    { text: 'Sin participación en decisiones escolares', correct: false, justification: 'Los docentes deben participar en asuntos que los afectan.' },
+                    { text: 'Condiciones laborales precarias como "normal"', correct: false, justification: 'La ley protege el derecho a condiciones seguras.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece la Orden Departamental 18/2025 sobre responsabilidades docentes?',
+                options: [
+                    { text: 'Planificación curricular, evaluación de aprendizajes, documentación de procesos y desarrollo profesional continuo',correct: true, justification: 'La OD 18/2025 actualiza responsabilidades. Enfatiza documentación y mejora continua.' },
+                    { text: 'Sin necesidad de planificación documentada', correct: false, justification: 'La planificación documentada es obligatoria.' },
+                    { text: 'Evaluación sin fundamentación teórica clara', correct: false, justification: 'La evaluación debe ser rigurosa y fundamentada.' },
+                    { text: 'Sin tiempo para desarrollo profesional', correct: false, justification: 'El desarrollo es responsabilidad de ambos: docente e institución.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es la relación correcta entre estándares MINERD y tu planificación de clase?',
+                options: [
+                    { text: 'Tus objetivos deben alinearse a estándares establecidos, ser medibles y desarrollar competencias clave',correct: true, justification: 'La alineación a estándares garantiza coherencia nacional. Los estándares definen lo esencial.' },
+                    { text: 'Sin necesidad de considerar estándares nacionales', correct: false, justification: 'Los estándares son obligatorios para toda institución.' },
+                    { text: 'Copiar estándares sin adaptación al contexto', correct: false, justification: 'Necesitas interpretarlos localmente, no solo copiar.' },
+                    { text: 'Enseñar lo que el docente considera importante sin estándares', correct: false, justification: 'La individualidad sin estándares crea inconsistencia.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué responsabilidades tiene el docente respecto a confidencialidad de información estudiantil?',
+                options: [
+                    { text: 'Proteger información privada del estudiante, usar solo para propósitos pedagógicos y no divulgar sin consentimiento',correct: true, justification: 'La confidencialidad es derecho del estudiante. Debes ser guardián de información sensible.' },
+                    { text: 'Compartir información de estudiantes libremente en redes sociales', correct: false, justification: 'Eso viola privacidad. Es impropio y potencialmente ilegal.' },
+                    { text: 'Usar información sensible para criticar públicamente', correct: false, justification: 'La privacidad y dignidad deben respetarse.' },
+                    { text: 'Sin restricciones en qué compartir sobre estudiantes', correct: false, justification: 'Hay restricciones legales y éticas claro.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuáles son los componentes obligatorios de tu evaluación de aprendizajes según normativas?',
+                options: [
+                    { text: 'Evaluación diagnóstica, formativa continua, sumativa final, realimentación clara y documentación',correct: true, justification: 'Estos componentes aseguran evaluación integral. Cada uno sirve propósito diferente.' },
+                    { text: 'Solo examen final sin evaluación continua', correct: false, justification: 'La evaluación es continua. Un examen final es insuficiente.' },
+                    { text: 'Sin retroalimentación al estudiante', correct: false, justification: 'La retroalimentación es obligatoria para aprendizaje.' },
+                    { text: 'Evaluación arbitraria sin criterios claros', correct: false, justification: 'Los criterios deben comunicarse con claridad previa.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece el Reglamento del Estatuto del Docente sobre procedimientos disciplinarios?',
+                options: [
+                    { text: 'Debido proceso: notificación de cargos, oportunidad de defensa, investigación justa y derecho a apelación',correct: true, justification: 'El debido proceso protege derechos docentes. Sin él, cualquier sanción es inválida.' },
+                    { text: 'Sanción inmediata sin investigación', correct: false, justification: 'Eso violaría derechos. La investigación es obligatoria.' },
+                    { text: 'Sin oportunidad de escuchar la defensa docente', correct: false, justification: 'El derecho a defensa es fundamental.' },
+                    { text: 'Sanciones secretas sin notificación', correct: false, justification: 'La transparencia y notificación son derechos.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cómo debe el docente responder ante sospecha de incumplimiento de otro docente?',
+                options: [
+                    { text: 'Reportar a dirección con información específica, permitir investigación y no interferir en proceso',correct: true, justification: 'El reporte es responsabilidad institucional. Pero no es tu rol investigar; eso es de dirección.' },
+                    { text: 'Ignorar por "compañerismo"', correct: false, justification: 'La compañía profesional incluye mantener estándares. Incumplimiento afecta todo el centro.' },
+                    { text: 'Investigar por tu cuenta y exponer públicamente', correct: false, justification: 'Eso interfiere con debido proceso. El reporte es suficiente.' },
+                    { text: 'Chismear sin reportar formalmente', correct: false, justification: 'El rumor no es responsable. El reporte formal a dirección sí.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es el marco legal para la evaluación del desempeño docente (EDD)?',
+                options: [
+                    { text: 'Ley 66-97, OD 18/2025, Estándares Profesionales MINERD y Reglamento del Estatuto del Docente',correct: true, justification: 'Estos son los marcos legales clave. La EDD se fundamenta en estos regulaciones.' },
+                    { text: 'Solo criterios del director sin marco legal', correct: false, justification: 'Debe haber marcos legales claros que todos conocen.' },
+                    { text: 'Sin regulación ni estándares claros', correct: false, justification: 'Hay regulaciones. Los docentes merecen claridad.' },
+                    { text: 'Evaluación arbitraria sin fundamento legal', correct: false, justification: 'La evaluación debe ser legal, rigurosa y transparente.' }
+                ]
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let answers = {};
+        let shuffledQuestions = [];
+        let quizStartTime = null;
+        let timerInterval = null;
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function shuffleOptions(question) {
+            const correct = question.options.find(o => o.correct);
+            const incorrect = question.options.filter(o => !o.correct);
+            return shuffleArray([correct, ...incorrect]);
+        }
+        
+        function startQuiz() {
+            const docenteName = document.getElementById('docenteName').value.trim();
+            if (!docenteName) {
+                alert('Por favor ingresa tu nombre completo para iniciar el simulador.');
+                return;
+            }
+            
+            document.getElementById('welcomeSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            
+            shuffledQuestions = shuffleArray(questions).slice(0, 25);
+            shuffledQuestions.forEach(q => {
+                q.displayOptions = shuffleOptions(q);
+            });
+            
+            document.getElementById('totalQuestions').textContent = shuffledQuestions.length;
+            
+            quizStartTime = Date.now();
+            startTimer();
+            showQuestion();
+        }
+        
+        function startTimer() {
+            const totalSeconds = 40 * 60;
+            document.getElementById('timerDisplay').style.display = 'inline-block';
+            
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                const remaining = totalSeconds - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerDisplay = document.getElementById('timeRemaining');
+                timerDisplay.textContent = timeStr;
+                
+                if (remaining <= 300) {
+                    timerDisplay.parentElement.classList.add('warning');
+                }
+            }, 1000);
+        }
+        
+        function showQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            
+            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / shuffledQuestions.length * 100) + '%';
+            
+            const typeTag = document.getElementById('typeTag');
+            if (question.type === 'methodology') {
+                typeTag.className = 'question-type methodology';
+                typeTag.textContent = 'METODOLOGÍA PEDAGÓGICA';
+            } else {
+                typeTag.className = 'question-type';
+                typeTag.textContent = 'MARCO LEGAL / ESTÁNDARES';
+            }
+            
+            document.getElementById('questionText').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.displayOptions.forEach((option, index) => {
+                const optionElement = document.createElement('label');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                    <span class="option-label">${option.text}</span>
+                `;
+                
+                optionElement.addEventListener('change', () => {
+                    answers[currentQuestion] = index;
+                    updateProgressCount();
+                    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('btnPrevious').disabled = currentQuestion === 0;
+            document.getElementById('btnNext').textContent = currentQuestion === shuffledQuestions.length - 1 ? 'Finalizar simulador →' : 'Siguiente pregunta →';
+            
+            updateProgressCount();
+        }
+        
+        function updateProgressCount() {
+            const answered = Object.keys(answers).length;
+            document.getElementById('answeredCount').textContent = answered;
+        }
+        
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < shuffledQuestions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const results = [];
+            
+            shuffledQuestions.forEach((question, index) => {
+                const selectedIndex = answers[index];
+                const isCorrect = selectedIndex !== undefined && question.displayOptions[selectedIndex].correct;
+                
+                if (isCorrect) {
+                    score += 2;
+                }
+                
+                results.push({
+                    question: question.text,
+                    selectedIndex,
+                    options: question.displayOptions,
+                    correct: isCorrect,
+                    type: question.type
+                });
+            });
+            
+            const percentage = Math.round((score / 50) * 100);
+            const approved = score >= 35;
+            
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalPercentage').textContent = percentage + '%';
+            
+            const statusEl = document.getElementById('resultStatus');
+            if (approved) {
+                statusEl.className = 'result-status approved';
+                statusEl.innerHTML = '<strong>✓ Simulación aprobada</strong><p>¡Felicitaciones! Demuestras dominio de metodologías pedagógicas y marco legal. Estás preparado/a para la evaluación EDD formal.</p>';
+            } else {
+                statusEl.className = 'result-status not-approved';
+                statusEl.innerHTML = '<strong>✗ Simulación no aprobada</strong><p>Necesitas reforzar conocimientos sobre metodologías pedagógicas, evaluación de aprendizajes y marco legal de docentes. Revisa la retroalimentación a continuación.</p>';
+            }
+            
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            feedbackContainer.innerHTML = '<h3 class="feedback-title">Retroalimentación de respuestas</h3>';
+            
+            results.forEach((result, index) => {
+                const selectedOption = result.selectedIndex !== undefined ? result.options[result.selectedIndex] : null;
+                const correctOption = result.options.find(o => o.correct);
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = `answer-item ${result.correct ? 'correct' : 'incorrect'}`;
+                
+                let html = `
+                    <div class="question-number">Pregunta ${index + 1} - ${result.type === 'methodology' ? 'Metodología Pedagógica' : 'Marco Legal/Estándares'}</div>
+                    <div class="question-text">${result.question}</div>
+                `;
+                
+                if (result.selectedIndex !== undefined) {
+                    html += `<div class="your-answer"><strong>Tu respuesta:</strong> ${selectedOption.text}</div>`;
+                } else {
+                    html += `<div class="your-answer"><strong>No respondida</strong></div>`;
+                }
+                
+                if (!result.correct) {
+                    html += `<div class="correct-answer"><strong>Respuesta correcta:</strong> ${correctOption.text}</div>`;
+                }
+                
+                html += `<div class="justification"><strong>Justificación:</strong> ${correctOption.justification}</div>`;
+                
+                itemEl.innerHTML = html;
+                feedbackContainer.appendChild(itemEl);
+            });
+            
+            document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            shuffledQuestions = [];
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('welcomeSection').classList.remove('hidden');
+            document.getElementById('docenteName').value = '';
+            document.getElementById('docenteName').focus();
+        }
+    </script>
+</body>
+</html>
