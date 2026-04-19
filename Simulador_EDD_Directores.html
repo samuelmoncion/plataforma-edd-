@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador EDD - Evaluación del Desempeño Docente (Directores)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffc107;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+        
+        .logo-text {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.85;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #003366;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #003366;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .info-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #003366;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #003366;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #003366;
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 51, 102, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* QUIZ SECTION */
+        .quiz-section {
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .question-counter {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #003366;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .question-type {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #003366;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-type.legal {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .question-type.case {
+            background: #f3e5f5;
+            color: #4a148c;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .option:hover {
+            background: #f8f9fa;
+            border-color: #003366;
+        }
+        
+        .option input[type="radio"] {
+            margin-top: 2px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            accent-color: #003366;
+        }
+        
+        .option.selected {
+            background: #e3f2fd;
+            border-color: #003366;
+        }
+        
+        .option-label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+        
+        .btn-previous {
+            flex: 1;
+            background: #6c757d;
+        }
+        
+        .btn-next {
+            flex: 1;
+        }
+        
+        /* RESULTS SECTION */
+        .results-section {
+            text-align: center;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+            color: white;
+            padding: 50px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .score-display h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .score-display .score {
+            font-size: 72px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        
+        .score-display .max-score {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 20px;
+        }
+        
+        .score-display .percentage {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .result-status {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .result-status.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result-status.not-approved {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .feedback-section {
+            text-align: left;
+            margin-top: 40px;
+        }
+        
+        .feedback-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #003366;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffc107;
+            padding-bottom: 10px;
+        }
+        
+        .answer-item {
+            background: #f8f9fa;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct {
+            border-left-color: #28a745;
+        }
+        
+        .answer-item.incorrect {
+            border-left-color: #dc3545;
+        }
+        
+        .answer-item .question-number {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .answer-item .question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        
+        .answer-item .your-answer {
+            padding: 10px;
+            background: white;
+            border-left: 2px solid #dc3545;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #dc3545;
+            border-radius: 4px;
+        }
+        
+        .answer-item.correct .your-answer {
+            border-left-color: #28a745;
+            color: #28a745;
+        }
+        
+        .answer-item .correct-answer {
+            padding: 10px;
+            background: #d4edda;
+            border-left: 2px solid #28a745;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #155724;
+            border-radius: 4px;
+        }
+        
+        .answer-item .justification {
+            padding: 10px;
+            background: #e7f3ff;
+            border-left: 2px solid #003366;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #003366;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+        
+        .restart-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .timer {
+            display: inline-block;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .timer.warning {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-previous {
+                margin-right: 0;
+            }
+            
+            .score-display .score {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-text">REPÚBLICA DOMINICANA - MINISTERIO DE EDUCACIÓN</div>
+            <h1>Simulador EDD</h1>
+            <p><strong>Evaluación del Desempeño Docente</strong></p>
+            <p style="font-size: 12px; margin-top: 8px;">Directores de Centro Educativo</p>
+        </div>
+        
+        <div class="content">
+            <!-- WELCOME SECTION -->
+            <div id="welcomeSection">
+                <div class="info-box">
+                    <strong>Simulador preparatorio — Directores de Centro Educativo</strong>
+                    <p style="margin-top: 12px;">Basado en los Estándares Profesionales y de Desempeño del MINERD, la Ley 66-97, la Orden Departamental 18/2025 (EDD) y el Reglamento del Estatuto del Docente. Las preguntas y opciones se mezclan aleatoriamente. Al finalizar, se muestran los errores con justificación para reforzar el aprendizaje.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nombre completo del/la director/a</label>
+                    <input type="text" id="directorName" placeholder="Ej: Ramón Samuel Monción De la Cruz" required>
+                </div>
+                
+                <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                    <h3 style="color: #003366; margin-bottom: 15px; font-size: 16px;">Información del Simulador</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Total de ítems</label>
+                            <div class="value">25</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Escala</label>
+                            <div class="value">50 pts</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Casos directivos</label>
+                            <div class="value">15</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Marco legal/EDD</label>
+                            <div class="value">10</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Tiempo total</label>
+                            <div class="value">40 min</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Puntaje mínimo</label>
+                            <div class="value">35 pts (70%)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startQuiz()">Iniciar Simulador EDD</button>
+            </div>
+            
+            <!-- QUIZ SECTION -->
+            <div id="quizSection" class="hidden quiz-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div id="timerDisplay" class="timer" style="display: none;">
+                        ⏱ <span id="timeRemaining">40:00</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="question-counter">
+                    Pregunta <span id="currentQuestion">1</span> de <span id="totalQuestions">25</span>
+                </div>
+                
+                <div id="typeTag" class="question-type"></div>
+                <div id="questionText" class="question-text"></div>
+                
+                <div class="options" id="optionsContainer"></div>
+                
+                <div class="button-group">
+                    <button class="btn btn-previous btn-disabled" id="btnPrevious" onclick="previousQuestion()" disabled>← Pregunta anterior</button>
+                    <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">Siguiente pregunta →</button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <p style="font-size: 13px; color: #666; margin: 0;">
+                        Se han respondido <strong id="answeredCount">0</strong> de 25 preguntas
+                    </p>
+                </div>
+            </div>
+            
+            <!-- RESULTS SECTION -->
+            <div id="resultsSection" class="hidden results-section">
+                <div class="score-display">
+                    <h2>Resultado de tu simulación</h2>
+                    <div class="max-score">Sobre 50 puntos</div>
+                    <div class="score" id="finalScore">0</div>
+                    <div class="percentage" id="finalPercentage">0%</div>
+                </div>
+                
+                <div id="resultStatus" class="result-status"></div>
+                
+                <div class="feedback-section" id="feedbackContainer"></div>
+                
+                <div class="restart-section">
+                    <button class="btn" onclick="restartQuiz()">Realizar otro simulador</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            // CASOS DIRECTIVOS (15)
+            {
+                type: 'case',
+                text: 'Durante una reunión de consejo directivo, un docente presenta una queja sobre el cumplimiento de horario de un colega. Como director, ¿cuál es tu primer paso?',
+                options: [
+                    { text: 'Investigar de manera objetiva recopilando evidencias antes de tomar decisiones', correct: true, justification: 'Según los Estándares Profesionales del MINERD, un director debe investigar objetivamente antes de actuar. El liderazgo institucional requiere equidad y debido proceso.' },
+                    { text: 'Sancionar inmediatamente al docente acusado', correct: false, justification: 'Esto viola principios de debido proceso establecidos en el Reglamento del Estatuto del Docente. Toda decisión disciplinaria requiere investigación previa.' },
+                    { text: 'Ignorar la queja para evitar conflictos', correct: false, justification: 'Un director tiene responsabilidad de mantener orden y bienestar institucional. El liderazgo pedagógico exige atender problemas de incumplimiento.' },
+                    { text: 'Hablar informalmente con ambas partes por separado sin documentar', correct: false, justification: 'La gestión institucional requiere documentación formal. Los Estándares MINERD enfatizan la importancia del registro y la transparencia.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Observas que un docente tiene dificultades para implementar estrategias pedagógicas efectivas. Su desempeño es bajo y afecta el aprendizaje de sus estudiantes. ¿Qué debes hacer como director?',
+                options: [
+                    { text: 'Proporcionar acompañamiento pedagógico personalizado y establecer un plan de mejora', correct: true, justification: 'El liderazgo pedagógico requiere apoyo y desarrollo continuo de docentes. La Orden Departamental 18/2025 enfatiza el acompañamiento como estrategia de mejora.' },
+                    { text: 'Trasladar al docente a otro centro sin intervención', correct: false, justification: 'Esto no resuelve el problema ni cumple con el deber institucional de desarrollo profesional del docente.' },
+                    { text: 'Retirar al docente del aula inmediatamente', correct: false, justification: 'Sin intentar acompañamiento primero, violaría derechos del docente y la estabilidad laboral reconocida en la Ley 66-97.' },
+                    { text: 'Aumentar su carga de trabajo para mejorar su productividad', correct: false, justification: 'Esto agrava la situación. El acompañamiento pedagógico, no la sobrecarga, es el camino según los Estándares MINERD.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Un grupo de padres solicita cambios en el horario de clases del centro sin justificación pedagógica. ¿Cómo procedes?',
+                options: [
+                    { text: 'Convocar a una reunión para escuchar sus demandas, informar sobre decisiones pedagógicas, y explicar la estructura institucional', correct: true, justification: 'El liderazgo institucional incluye comunicación efectiva con padres. Debes informar sobre criterios pedagógicos que sustentan las decisiones.' },
+                    { text: 'Aceptar los cambios inmediatamente para mantener buenas relaciones', correct: false, justification: 'Las decisiones deben basarse en criterios pedagógicos, no en presión. Un director debe ser firme en decisiones que benefician el aprendizaje.' },
+                    { text: 'Rechazar categóricamente la solicitud sin explicación', correct: false, justification: 'Aunque denegues la solicitud, debes ser transparente y respetuoso. La comunicación es clave en el liderazgo institucional.' },
+                    { text: 'Delegar la decisión completamente a los docentes sin participar', correct: false, justification: 'Como director, eres responsable de decisiones institucionales clave. La delegación no elimina tu responsabilidad.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Descubres que un docente no está cumpliendo con la planificación de clases requerida por MINERD. ¿Cuál es tu acción como director?',
+                options: [
+                    { text: 'Documentar la irregularidad, solicitar explicaciones y desarrollar un plan correctivo con plazos específicos', correct: true, justification: 'La Orden Departamental 18/2025 exige que directores supervisen y documenten incumplimientos. El acompañamiento correctivo es obligatorio.' },
+                    { text: 'Reportar directamente a la Regional Educativa sin hablar con el docente', correct: false, justification: 'Primero debes intentar resolución a nivel institucional siguiendo procedimientos establecidos en el Estatuto del Docente.' },
+                    { text: 'Ignorarlo si el docente produce buenos resultados académicos', correct: false, justification: 'La planificación es un proceso obligatorio independientemente de resultados. Refleja profesionalismo y transparencia educativa.' },
+                    { text: 'Sancionar inmediatamente sin acompañamiento', correct: false, justification: 'Primero viene el acompañamiento. Las sanciones son última instancia tras intentos de mejora documentados.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Un docente solicita permisos frecuentes por razones personales que afectan la continuidad pedagógica. ¿Cómo actúas?',
+                options: [
+                    { text: 'Reunirse con el docente para conocer la situación, establecer límites claros y buscar soluciones que compatibilicen necesidades con responsabilidades institucionales', correct: true, justification: 'Balancear derechos del docente (reconocidos en Ley 66-97) con responsabilidades institucionales es clave del liderazgo. La comunicación y acuerdo son esenciales.' },
+                    { text: 'Negar todos los permisos sin considerar circunstancias', correct: false, justification: 'La Ley 66-97 reconoce derechos a permisos bajo circunstancias justificadas. Debes ser razonable y flexible.' },
+                    { text: 'Permitir todos los permisos sin límite para evitar conflictos', correct: false, justification: 'Esto compromete la continuidad pedagógica y tus responsabilidades como director. Necesitas establecer límites claros.' },
+                    { text: 'Reportar al docente sin intentar resolver a nivel institucional', correct: false, justification: 'Debes agotar canales de resolución institucional antes de derivar a otras instancias.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Observas tensiones entre miembros del consejo directivo que afectan la toma de decisiones. ¿Cuál es tu responsabilidad?',
+                options: [
+                    { text: 'Facilitar espacios de comunicación, reconocer perspectivas diferentes y buscar consensos que fortalezcan el trabajo institucional', correct: true, justification: 'El liderazgo institucional requiere gestionar conflictos constructivamente. Facilitar diálogo es esencial para un consejo directivo funcional.' },
+                    { text: 'Ignorar las tensiones esperando que se resuelvan solas', correct: false, justification: 'Las tensiones sin resolver deterioran la toma de decisiones institucional. Tu liderazgo debe mediar activamente.' },
+                    { text: 'Imponer tu posición sin escuchar a otros', correct: false, justification: 'El liderazgo democrático valora múltiples perspectivas. Imponer decisiones sin diálogo es un liderazgo autoritario.' },
+                    { text: 'Expulsar del consejo a quienes no están de acuerdo', correct: false, justification: 'Esto violaría principios de participación democrática reconocidos en la Ley 66-97.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Tu centro enfrenta bajos resultados académicos en las evaluaciones nacionales. ¿Cómo procedes como director?',
+                options: [
+                    { text: 'Analizar datos, identificar causas raíz, involucrar docentes en diagnóstico y diseñar plan de mejora con metas realistas', correct: true, justification: 'Los Estándares MINERD enfatizan liderazgo pedagógico basado en datos. La mejora educativa es un proceso colaborativo documentado.' },
+                    { text: 'Culpar a los docentes públicamente sin análisis profundo', correct: false, justification: 'Esto es contraproducente. Necesitas análisis sistémico de factores múltiples antes de atribuir responsabilidades.' },
+                    { text: 'Ignora los resultados para evitar presión', correct: false, justification: 'Tu responsabilidad como director incluye responder a resultados con planes de mejora. Evadir es incumplimiento de funciones.' },
+                    { text: 'Cambiar docentes sin revisar metodologías ni recursos', correct: false, justification: 'El problema puede estar en múltiples factores. Diagnóstico profundo y apoyo son necesarios antes de cambios de personal.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Un docente comete un incumplimiento grave que requiere acción disciplinaria. ¿Cuál es el procedimiento correcto?',
+                options: [
+                    { text: 'Notificar formalmente al docente, permitir ejercer su derecha defensa, documentar todo y seguir procedimientos del Reglamento del Estatuto del Docente', correct: true, justification: 'El debido proceso es obligatorio. La Ley 66-97 y el Estatuto del Docente garantizan derechos procesales incluso en disciplina.' },
+                    { text: 'Sancionar verbalmente sin registro escrito', correct: false, justification: 'Las acciones disciplinarias deben documentarse formalmente para validez legal.' },
+                    { text: 'Consultar solo con colegas antes de notificar al docente', correct: false, justification: 'El docente tiene derecho a conocer cargos y responder. Ocultarle información viola debido proceso.' },
+                    { text: 'Dejar que el consejo directivo decida sin participación del docente', correct: false, justification: 'El docente debe tener oportunidad de presentar su defensa antes de cualquier decisión disciplinaria.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Recursos financieros llegan al centro. ¿Cómo decides su asignación como director?',
+                options: [
+                    { text: 'Convocar a consejo directivo, analizar necesidades institucionales, priorizar según PEC/POA y asignar transparentemente', correct: true, justification: 'La Orden Departamental 18/2025 requiere que decisiones financieras sean participativas, documentadas y alineadas a planificación institucional.' },
+                    { text: 'Decidir unilateralmente sin consultar', correct: false, justification: 'Las decisiones financieras deben ser participativas y transparentes según marcos de gobernanza institucional.' },
+                    { text: 'Asignar fondos según preferencias personales', correct: false, justification: 'Los fondos públicos deben usarse para fines institucionales, no personales. Esto es un principio ético fundamental.' },
+                    { text: 'Guardar recursos sin gastar para acumular fondos', correct: false, justification: 'Recursos presupuestados deben ejecutarse para beneficio institucional. Acumular sin gastar es mal uso de fondos.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Un docente requiere licencia médica prolongada. ¿Cuál es tu responsabilidad administrativa?',
+                options: [
+                    { text: 'Gestionar documentación, coordinar cobertura de clases, mantener actualizado el SIAMED y documentar el proceso', correct: true, justification: 'La Ley 66-97 reconoce derechos a licencia. Como director, debes gestionar administrativamente de manera ordenada y documentada.' },
+                    { text: 'Exigir que el docente continúe enseñando a pesar del problema de salud', correct: false, justification: 'Eso violaría derechos del docente y podría comprometerlo a él y a sus estudiantes.' },
+                    { text: 'Procesar la licencia sin buscar cobertura para sus clases', correct: false, justification: 'Tu responsabilidad incluye garantizar continuidad pedagógica. Debes organizar sustituto mientras dura la licencia.' },
+                    { text: 'No documentar la licencia para evitar que se vea que el docente está ausente', correct: false, justification: 'Todo debe estar documentado. Ocultar información es fraude administrativo.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Recibes una queja sobre acoso entre estudiantes. ¿Cómo procedes?',
+                options: [
+                    { text: 'Abrir investigación formal, involucrar equipo de orientación, proteger a víctimas, documentar todo y comunicar a padres/acudientes', correct: true, justification: 'La protección estudiantil es responsabilidad institucional. La Ley 66-97 requiere acciones inmediatas y documentadas ante reportes de acoso.' },
+                    { text: 'Decirles a los estudiantes que resuelvan el conflicto entre ellos', correct: false, justification: 'El acoso requiere intervención adulta. Ignorarlo expone a la institución a responsabilidades legales.' },
+                    { text: 'Mantenerlo en secreto para no afectar la reputación del centro', correct: false, justification: 'Ocultar acoso es negligencia institucional. Transparencia y acción protegen mejor la reputación.' },
+                    { text: 'Sancionar inmediatamente al estudiante acusado sin investigación', correct: false, justification: 'Necesitas investigación antes de sancionar. El debido proceso aplica también a estudiantes.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Un padre solicita cambio de docente porque "no le cae bien". ¿Cómo actúas?',
+                options: [
+                    { text: 'Escuchar sus preocupaciones, analizar si hay justificaciones pedagógicas, mantener profesionalismo y explicar criterios para cambios', correct: true, justification: 'Debes escuchar pero las decisiones deben basarse en criterios pedagógicos objetivos, no preferencias personales. La comunicación clara es esencial.' },
+                    { text: 'Aceptar el cambio inmediatamente para satisfacer al padre', correct: false, justification: 'Ceder a preferencias personales sin base pedagógica debilita liderazgo y crea expectativas insostenibles.' },
+                    { text: 'Rechazar categóricamente sin explicación', correct: false, justification: 'Aunque niegues, debes ser respetuoso y educativo sobre por qué tomas esa decisión.' },
+                    { text: 'Confrontar al padre agresivamente', correct: false, justification: 'Mantén profesionalismo siempre. El conflicto debe manejarse con diplomacia.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Detectas que un docente está usando métodos de enseñanza obsoletos pese a capacitaciones sobre pedagogía moderna. ¿Cuál es tu acción?',
+                options: [
+                    { text: 'Realizar observaciones de clase, brindar retroalimentación constructiva y ofrecer acompañamiento pedagógico especializado', correct: true, justification: 'El liderazgo pedagógico requiere supervisión y apoyo continuo. La Orden Departamental 18/2025 enfatiza acompañamiento para modernización pedagógica.' },
+                    { text: 'Avergonzar públicamente al docente sobre sus métodos', correct: false, justification: 'Esto es contraproducente. El acompañamiento debe ser respetuoso y confidencial.' },
+                    { text: 'Permitir que continúe usando métodos antiguos sin intervención', correct: false, justification: 'Tu responsabilidad como director incluye asegurar calidad pedagógica. El liderazgo requiere acción.' },
+                    { text: 'Sancionar al docente por no cambiar rápidamente', correct: false, justification: 'El cambio pedagógico requiere tiempo y apoyo. Sancionar sin acompañamiento es injusto.' }
+                ]
+            },
+            {
+                type: 'case',
+                text: 'Tu centro invierte recursos en infraestructura mientras hay carencias en materiales de enseñanza. ¿Cómo prioriza?',
+                options: [
+                    { text: 'Analizar necesidades en PEC/POA, equilibrar inversiones en infraestructura y pedagogía, priorizar lo que impacte más aprendizaje', correct: true, justification: 'La planificación institucional (PEC/POA) debe guiar inversiones. Los Estándares MINERD priorizan el aprendizaje como objetivo central.' },
+                    { text: 'Invertir solo en infraestructura porque es más visible', correct: false, justification: 'Infraestructura sin recursos pedagógicos no mejora aprendizaje. Debes balancear.' },
+                    { text: 'Gastar en lo que el director prefiera personalmente', correct: false, justification: 'Las inversiones deben responder a necesidades institucionales, no preferencias personales.' },
+                    { text: 'Dejar que cada docente decida su asignación sin criterio institucional', correct: false, justification: 'Necesitas visión institucional coherente. Sin criterios centrales, habrá inconsistencias.' }
+                ]
+            },
+            
+            // MARCO LEGAL/EDD (10)
+            {
+                type: 'legal',
+                text: '¿Cuál es el fundamento legal principal de la Evaluación del Desempeño Docente (EDD) en República Dominicana?',
+                options: [
+                    { text: 'La Ley 66-97 General de Educación de la República Dominicana', correct: true, justification: 'La Ley 66-97 es el marco legal fundamental para el sistema educativo dominicano. Establece la estructura y funciones de evaluación docente.' },
+                    { text: 'Leyes internacionales únicamente', correct: false, justification: 'Aunque hay marcos internacionales, la EDD se fundamenta en legislación dominicana interna.' },
+                    { text: 'Decisiones unilaterales de directores', correct: false, justification: 'La EDD tiene base legal establecida, no depende de decisiones personales.' },
+                    { text: 'Acuerdos sindicales solamente', correct: false, justification: 'Aunque sindicatos participan, el marco legal viene de legislación estatal.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: 'La Orden Departamental 18/2025 establece nuevos criterios para EDD. ¿Cuál es uno de sus objetivos principales?',
+                options: [
+                    { text: 'Asegurar que la evaluación sea justa, integral y orientada al desarrollo profesional continuo de docentes', correct: true, justification: 'La OD 18/2025 moderniza EDD enfocándose en desarrollo profesional y evaluación integral, no punitiva.' },
+                    { text: 'Facilitar despidos masivos de docentes', correct: false, justification: 'La evaluación busca mejora y desarrollo, no despidos. Eso contradiría el Estatuto del Docente.' },
+                    { text: 'Eliminar protecciones laborales del docente', correct: false, justification: 'Las protecciones están establecidas en Ley 66-97 y Estatuto del Docente. La OD no las elimina.' },
+                    { text: 'Aumentar arbitrariamente cargas de trabajo', correct: false, justification: 'La evaluación debe tener criterios objetivos, no ser pretexto para abusos.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece el Reglamento del Estatuto del Docente respecto a las responsabilidades del director en evaluación?',
+                options: [
+                    { text: 'El director debe acompañar, supervisar y documentar el desempeño docente de manera justa y transparente', correct: true, justification: 'El Estatuto del Docente establece que directores tienen responsabilidad de supervisión y apoyo documentado, respetando derechos del docente.' },
+                    { text: 'El director puede evaluar sin criterios establecidos', correct: false, justification: 'Toda evaluación debe basarse en criterios formales y transparentes establecidos en regulaciones.' },
+                    { text: 'Solo sindicatos pueden evaluar docentes', correct: false, justification: 'La evaluación es responsabilidad institucional compartida, no solo sindical.' },
+                    { text: 'La evaluación no requiere documentación', correct: false, justification: 'La documentación es esencial para validez legal y transparencia de evaluaciones.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: 'Según los Estándares Profesionales del MINERD, ¿cuáles son los pilares del liderazgo de un director?',
+                options: [
+                    { text: 'Liderazgo pedagógico, liderazgo institucional, liderazgo comunitario y liderazgo transformacional', correct: true, justification: 'Los Estándares MINERD establecen estos cuatro pilares como esenciales para el liderazgo efectivo de directores educativos.' },
+                    { text: 'Control absoluto sobre docentes y estudiantes', correct: false, justification: 'El liderazgo moderno es democrático y colaborativo, no autoritario.' },
+                    { text: 'Autoridad legal únicamente', correct: false, justification: 'El liderazgo requiere múltiples dimensiones, no solo autoridad formal.' },
+                    { text: 'Responsabilidad financiera exclusivamente', correct: false, justification: 'Aunque finanzas importan, el liderazgo directoral es multidimensional.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué establece la Ley 66-97 sobre los derechos de los docentes ante decisiones disciplinarias?',
+                options: [
+                    { text: 'Todo docente tiene derecho a defensa, conocer cargos, presentar pruebas y recurrir decisiones ante autoridades superiores', correct: true, justification: 'La Ley 66-97 garantiza derechos procesales a docentes. El debido proceso es fundamental en cualquier acción disciplinaria.' },
+                    { text: 'El director puede sancionar sin notificar al docente', correct: false, justification: 'Eso violaría derechos fundamentales establecidos en Ley 66-97.' },
+                    { text: 'Los docentes no tienen derechos durante disciplina', correct: false, justification: 'La ley protege explícitamente derechos procesales docentes.' },
+                    { text: 'Solo la Regional Educativa puede aplicar disciplina', correct: false, justification: 'Los directores tienen responsabilidades disciplinarias, aunque existen procesos de apelación.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuál es la estructura de análisis que requiere un director según el PEC (Proyecto Educativo del Centro)?',
+                options: [
+                    { text: 'Diagnóstico contextual, visión compartida, planes de mejora alineados a políticas MINERD y evaluación continua', correct: true, justification: 'El PEC requiere análisis integral desde diagnóstico hasta evaluación. Este proceso está mandatado en marcos de planificación institucional.' },
+                    { text: 'Solo escribir documentos sin implementar', correct: false, justification: 'El PEC es un documento vivo que guía acciones reales.' },
+                    { text: 'Copiar planes de otros centros sin contexto', correct: false, justification: 'El PEC debe ser específico al contexto de cada centro.' },
+                    { text: 'Ignorar diagnósticos y actuar sin análisis', correct: false, justification: 'El diagnóstico es la base para decisiones efectivas.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué significa "liderazgo pedagógico" en los Estándares MINERD?',
+                options: [
+                    { text: 'El director prioriza mejora continua del proceso enseñanza-aprendizaje, acompañamiento docente y visión pedagógica compartida', correct: true, justification: 'Liderazgo pedagógico es el corazón del liderazgo directoral moderno. Implica enfoque en calidad educativa y apoyo docente.' },
+                    { text: 'Que el director enseñe todas las materias', correct: false, justification: 'Liderazgo pedagógico no es enseñanza directa sino orientación y mejora del proceso educativo.' },
+                    { text: 'Control burocrático sobre docentes', correct: false, justification: 'Es lo opuesto: es apoyo colaborativo, no control coercitivo.' },
+                    { text: 'Solo responsabilidad de Ministerio', correct: false, justification: 'Cada director es responsable del liderazgo pedagógico en su centro.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cómo define la Orden Departamental 18/2025 el propósito de la EDD para directores?',
+                options: [
+                    { text: 'Mejorar desempeño institucional a través de evaluación constructiva, acompañamiento y desarrollo profesional', correct: true, justification: 'La OD 18/2025 enfatiza que EDD es herramienta de mejora, no castigo. Busca elevar estándares de calidad.' },
+                    { text: 'Castigar y expulsar docentes "débiles"', correct: false, justification: 'Eso contradice el propósito de evaluación constructiva establecido en regulaciones.' },
+                    { text: 'Justificar recortes presupuestarios', correct: false, justification: 'La evaluación sirve para mejora educativa, no para reducir recursos.' },
+                    { text: 'Ejercer control político sobre docentes', correct: false, justification: 'La evaluación debe ser técnica y transparente, no política.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Qué elementos debe incluir un plan de mejora según marcos de planificación institucional del MINERD?',
+                options: [
+                    { text: 'Diagnóstico de necesidades, objetivos SMART, acciones concretas, cronograma, responsables, recursos y indicadores de evaluación', correct: true, justification: 'Un buen plan de mejora tiene estructura clara con elementos medibles. Esto está establecido en orientaciones MINERD para planificación.' },
+                    { text: 'Solo expresar buenos deseos sin acciones concretas', correct: false, justification: 'Los planes deben ser operacionales con acciones específicas.' },
+                    { text: 'Responsabilidades vagas sin cronograma', correct: false, justification: 'Necesitas especificidad sobre quién hace qué y cuándo.' },
+                    { text: 'Sin indicadores para medir resultados', correct: false, justification: 'Los indicadores son esenciales para saber si el plan funciona.' }
+                ]
+            },
+            {
+                type: 'legal',
+                text: '¿Cuáles son los componentes clave del Proyecto de Ley de Gobernanza Educativa que fortalecen liderazgo dirección?',
+                options: [
+                    { text: 'Mayor autonomía directoral con responsabilidad aumentada, participación democrática y rendición de cuentas', correct: true, justification: 'Las reformas de gobernanza buscan fortalecer directores como líderes institucionales con mayor capacidad de decisión y responsabilidad clara.' },
+                    { text: 'Centralización total de decisiones en MINERD', correct: false, justification: 'Las reformas buscan descentralización y autonomía, no centralización.' },
+                    { text: 'Eliminar participación de docentes y padres', correct: false, justification: 'Las reformas enfatizan participación democrática, no exclusión.' },
+                    { text: 'Sin evaluación o responsabilidad directoral', correct: false, justification: 'La autonomía viene con mayor responsabilidad, no su ausencia.' }
+                ]
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let answers = {};
+        let shuffledQuestions = [];
+        let quizStartTime = null;
+        let timerInterval = null;
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function shuffleOptions(question) {
+            const correct = question.options.find(o => o.correct);
+            const incorrect = question.options.filter(o => !o.correct);
+            return shuffleArray([correct, ...incorrect]);
+        }
+        
+        function startQuiz() {
+            const directorName = document.getElementById('directorName').value.trim();
+            if (!directorName) {
+                alert('Por favor ingresa tu nombre completo para iniciar el simulador.');
+                return;
+            }
+            
+            document.getElementById('welcomeSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            
+            shuffledQuestions = shuffleArray(questions).slice(0, 25);
+            shuffledQuestions.forEach(q => {
+                q.displayOptions = shuffleOptions(q);
+            });
+            
+            document.getElementById('totalQuestions').textContent = shuffledQuestions.length;
+            
+            quizStartTime = Date.now();
+            startTimer();
+            showQuestion();
+        }
+        
+        function startTimer() {
+            const totalSeconds = 40 * 60;
+            document.getElementById('timerDisplay').style.display = 'inline-block';
+            
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                const remaining = totalSeconds - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerDisplay = document.getElementById('timeRemaining');
+                timerDisplay.textContent = timeStr;
+                
+                if (remaining <= 300) {
+                    timerDisplay.parentElement.classList.add('warning');
+                }
+            }, 1000);
+        }
+        
+        function showQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            
+            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / shuffledQuestions.length * 100) + '%';
+            
+            const typeTag = document.getElementById('typeTag');
+            if (question.type === 'case') {
+                typeTag.className = 'question-type case';
+                typeTag.textContent = 'CASO DIRECTIVO';
+            } else {
+                typeTag.className = 'question-type legal';
+                typeTag.textContent = 'MARCO LEGAL / EDD';
+            }
+            
+            document.getElementById('questionText').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.displayOptions.forEach((option, index) => {
+                const optionElement = document.createElement('label');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                    <span class="option-label">${option.text}</span>
+                `;
+                
+                optionElement.addEventListener('change', () => {
+                    answers[currentQuestion] = index;
+                    updateProgressCount();
+                    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('btnPrevious').disabled = currentQuestion === 0;
+            document.getElementById('btnNext').textContent = currentQuestion === shuffledQuestions.length - 1 ? 'Finalizar simulador →' : 'Siguiente pregunta →';
+            
+            updateProgressCount();
+        }
+        
+        function updateProgressCount() {
+            const answered = Object.keys(answers).length;
+            document.getElementById('answeredCount').textContent = answered;
+        }
+        
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < shuffledQuestions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const results = [];
+            
+            shuffledQuestions.forEach((question, index) => {
+                const selectedIndex = answers[index];
+                const isCorrect = selectedIndex !== undefined && question.displayOptions[selectedIndex].correct;
+                
+                if (isCorrect) {
+                    score += 2;
+                }
+                
+                results.push({
+                    question: question.text,
+                    selectedIndex,
+                    options: question.displayOptions,
+                    correct: isCorrect,
+                    type: question.type
+                });
+            });
+            
+            const percentage = Math.round((score / 50) * 100);
+            const approved = score >= 35;
+            
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalPercentage').textContent = percentage + '%';
+            
+            const statusEl = document.getElementById('resultStatus');
+            if (approved) {
+                statusEl.className = 'result-status approved';
+                statusEl.innerHTML = '<strong>✓ Simulación aprobada</strong><p>Congratulations! Has alcanzado el puntaje mínimo de 35 puntos (70%). Estás preparado/a para la evaluación EDD.</p>';
+            } else {
+                statusEl.className = 'result-status not-approved';
+                statusEl.innerHTML = '<strong>✗ Simulación no aprobada</strong><p>Necesitas estudiar más sobre los Estándares MINERD, Ley 66-97, Orden Departamental 18/2025 y Reglamento del Estatuto del Docente. Revisa la retroalimentación a continuación.</p>';
+            }
+            
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            feedbackContainer.innerHTML = '<h3 class="feedback-title">Retroalimentación de respuestas</h3>';
+            
+            results.forEach((result, index) => {
+                const selectedOption = result.selectedIndex !== undefined ? result.options[result.selectedIndex] : null;
+                const correctOption = result.options.find(o => o.correct);
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = `answer-item ${result.correct ? 'correct' : 'incorrect'}`;
+                
+                let html = `
+                    <div class="question-number">Pregunta ${index + 1} - ${result.type === 'case' ? 'Caso Directivo' : 'Marco Legal/EDD'}</div>
+                    <div class="question-text">${result.question}</div>
+                `;
+                
+                if (result.selectedIndex !== undefined) {
+                    html += `<div class="your-answer"><strong>Tu respuesta:</strong> ${selectedOption.text}</div>`;
+                } else {
+                    html += `<div class="your-answer"><strong>No respondida</strong></div>`;
+                }
+                
+                if (!result.correct) {
+                    html += `<div class="correct-answer"><strong>Respuesta correcta:</strong> ${correctOption.text}</div>`;
+                }
+                
+                html += `<div class="justification"><strong>Justificación:</strong> ${correctOption.justification}</div>`;
+                
+                itemEl.innerHTML = html;
+                feedbackContainer.appendChild(itemEl);
+            });
+            
+            document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            shuffledQuestions = [];
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('welcomeSection').classList.remove('hidden');
+            document.getElementById('directorName').value = '';
+            document.getElementById('directorName').focus();
+        }
+    </script>
+</body>
+</html>
