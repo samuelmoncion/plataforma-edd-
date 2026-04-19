@@ -558,10 +558,25 @@
                     <h2>Resultado de tu simulación</h2>
                     <div class="max-score">Sobre 50 puntos</div>
                     <div class="score" id="finalScore">0</div>
-                    Simulador_EDD_CoordinadoresDocentes.html
-<div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #2e7d32; padding: 25px; margin-top: 30px; border-radius: 8px; font-size: 14px; line-height: 1.8; color: #1b5e20;"><p style="margin-bottom: 15px; font-style: italic; color: #2e7d32; font-weight: 500;"><strong>Tu seguridad en el conocimiento es lo que importa.</strong></p><p style="margin-bottom: 15px;">Este simulador mide tu <strong>confianza y seguridad</strong> en los conocimientos de nuestros estándares, no la búsqueda de una nota perfecta.</p><p style="margin-bottom: 15px;"><strong>Has alcanzado una excelente puntuación (<span id="porcentajeFinal">0</span>%).</strong> Dominas tus competencias profesionales.</p><p style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #a5d6a7; font-size: 13px; color: #558b2f; font-weight: 600;">Recordemos: <em>"Evaluarse es crecer juntos"</em></p></div>
+                    <div class="percentage" id="finalPercentage">0%</div>
                 </div>
                 
+                
+                <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #2e7d32; padding: 25px; margin-top: 30px; border-radius: 8px; font-size: 14px; line-height: 1.8; color: #1b5e20;">
+                    <p style="margin-bottom: 15px; font-style: italic; color: #2e7d32; font-weight: 500;">
+                        <strong>Tu seguridad en el conocimiento es lo que importa.</strong>
+                    </p>
+                    <p style="margin-bottom: 15px;">
+                        Este simulador mide tu <strong>confianza y seguridad</strong> en los conocimientos de nuestros estándares, no la búsqueda de una nota perfecta.
+                    </p>
+                    <p style="margin-bottom: 15px;">
+                        <strong>Has alcanzado una excelente puntuación (<span id="finalPercentageText">0</span>%).</strong> Dominas tus competencias profesionales.
+                    </p>
+                    <p style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #a5d6a7; font-size: 13px; color: #558b2f; font-weight: 600;">
+                        Recordemos: <em>"Evaluarse es crecer juntos"</em>
+                    </p>
+                </div>
+
                 <div id="resultStatus" class="result-status"></div>
                 
                 <div class="feedback-section" id="feedbackContainer"></div>
@@ -1001,7 +1016,7 @@
             document.getElementById('resultsSection').classList.remove('hidden');
             
             document.getElementById('finalScore').textContent = score;
-            document.getElementById('finalPercentage').textContent = percentage + '%';
+            document.getElementById('finalPercentage').textContent = percentage + '%'; if(document.getElementById('finalPercentageText')) document.getElementById('finalPercentageText').textContent = percentage;
             
             const statusEl = document.getElementById('resultStatus');
             if (approved) {
