@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinamizador TICs - Integración de TIC en el Aula</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a7a6e 0%, #2a9a8e 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffc107;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+        
+        .logo-text {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.85;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .info-box {
+            background: #e0f2f1;
+            border-left: 4px solid #1a7a6e;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #1a7a6e;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .info-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a7a6e;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a7a6e;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a7a6e;
+            box-shadow: 0 0 0 3px rgba(26, 122, 110, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1a7a6e 0%, #2a9a8e 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 122, 110, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .quiz-section {
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #1a7a6e, #4db8ad);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .question-counter {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a7a6e;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .question-type {
+            display: inline-block;
+            background: #e0f2f1;
+            color: #1a7a6e;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-type.planning {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .question-type.resources {
+            background: #f3e5f5;
+            color: #4a148c;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .option:hover {
+            border-color: #1a7a6e;
+            background: #f0f8f7;
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .option-label {
+            flex: 1;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .option.selected {
+            border-color: #1a7a6e;
+            background: #e0f2f1;
+        }
+        
+        .quiz-nav {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+        
+        .btn-nav {
+            flex: 1;
+        }
+        
+        .timer {
+            display: inline-block;
+            background: white;
+            border: 2px solid #ffc107;
+            color: #1a7a6e;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .timer.warning {
+            border-color: #d84315;
+            color: #d84315;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .results-section {
+            margin-top: 20px;
+        }
+        
+        .result-status {
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 6px solid;
+        }
+        
+        .result-status.approved {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .result-status.not-approved {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .result-status strong {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .result-status p {
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .score-display {
+            background: #f8f9fa;
+            border: 2px solid #1a7a6e;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .score-display .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1a7a6e;
+            margin-bottom: 10px;
+        }
+        
+        .score-display .score-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .feedback-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a7a6e;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .answer-item {
+            background: white;
+            border-left: 6px solid;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        
+        .answer-item.correct {
+            border-left-color: #28a745;
+            background: #f0f8f5;
+        }
+        
+        .answer-item.incorrect {
+            border-left-color: #dc3545;
+            background: #fdf0f0;
+        }
+        
+        .question-number {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .question-text-feedback {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .your-answer {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .correct-answer {
+            background: #d4edda;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #155724;
+        }
+        
+        .justification {
+            background: #e8f4f3;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #1a7a6e;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .progress-answered {
+            background: #e0f2f1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #1a7a6e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-text">MINERD • Sistema Nacional de Educación</div>
+            <h1>Dinamizador TICs</h1>
+            <p>Simulador de Integración de Tecnologías en el Aula</p>
+            <p style="font-size: 12px; margin-top: 10px;">Evalúa tu competencia en planificación y uso de TIC para mejorar la calidad educativa</p>
+        </div>
+        
+        <div class="content">
+            <!-- WELCOME SECTION -->
+            <div id="welcomeSection">
+                <div class="info-box">
+                    <strong>Bienvenido al Dinamizador TICs</strong>
+                    <p style="margin-top: 10px;">Este simulador evaluará tus conocimientos sobre integración de tecnologías de la información y comunicación (TIC) en el proceso de enseñanza-aprendizaje. Responderás 25 preguntas en 40 minutos sobre:</p>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Planificación curricular con TIC</li>
+                        <li>Recursos tecnológicos disponibles por nivel</li>
+                        <li>Metodologías pedagógicas mediadas por TIC</li>
+                        <li>Accesibilidad digital en el aula</li>
+                        <li>Marco normativo MINERD</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ingresa tu nombre completo:</label>
+                    <input type="text" id="docenteName" placeholder="Ej: Juan Pérez García" autocomplete="off">
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>PREGUNTAS</label>
+                        <div class="value">25</div>
+                    </div>
+                    <div class="info-item">
+                        <label>TIEMPO</label>
+                        <div class="value">40 min</div>
+                    </div>
+                    <div class="info-item">
+                        <label>PUNTOS POR RESPUESTA</label>
+                        <div class="value">2 pts</div>
+                    </div>
+                    <div class="info-item">
+                        <label>PUNTUACIÓN MÁXIMA</label>
+                        <div class="value">50 pts</div>
+                    </div>
+                </div>
+                
+                <button class="btn" style="margin-top: 30px;" onclick="startQuiz()">
+                    Iniciar Simulador →
+                </button>
+            </div>
+            
+            <!-- QUIZ SECTION -->
+            <div id="quizSection" class="quiz-section hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <span id="timerDisplay" class="timer" style="display: none;">
+                            ⏱️ Tiempo restante: <span id="timeRemaining">40:00</span>
+                        </span>
+                    </div>
+                    <div style="font-size: 14px; color: #666; font-weight: 600;">
+                        Docente: <span id="docenteNameDisplay"></span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="progress-info">
+                    <span class="question-counter">
+                        Pregunta <span id="currentQuestion">1</span> de <span id="totalQuestions">25</span>
+                    </span>
+                    <span class="progress-answered">
+                        Respondidas: <span id="answeredCount">0</span>
+                    </span>
+                </div>
+                
+                <div id="typeTag" class="question-type"></div>
+                
+                <div id="questionText" class="question-text"></div>
+                
+                <div id="optionsContainer" class="options"></div>
+                
+                <div class="quiz-nav">
+                    <button class="btn btn-secondary btn-nav" id="btnPrevious" onclick="previousQuestion()">
+                        ← Pregunta anterior
+                    </button>
+                    <button class="btn btn-nav" id="btnNext" onclick="nextQuestion()">
+                        Siguiente pregunta →
+                    </button>
+                </div>
+            </div>
+            
+            <!-- RESULTS SECTION -->
+            <div id="resultsSection" class="results-section hidden">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="color: #1a7a6e; font-size: 24px; margin-bottom: 15px;">Simulación Finalizada</h2>
+                    <div class="score-display">
+                        <div class="score-value" id="finalScore">0</div>
+                        <div class="score-label">Puntos obtenidos</div>
+                        <div style="font-size: 28px; color: #1a7a6e; margin-top: 10px; font-weight: 700;">
+                            <span id="finalPercentage">0%</span>
+                        </div>
+                        <div class="score-label">Porcentaje</div>
+                    </div>
+                </div>
+                
+                <div id="resultStatus"></div>
+                
+                <div id="feedbackContainer"></div>
+                
+                <div style="margin-top: 30px; text-align: center;">
+                    <button class="btn" onclick="restartQuiz()" style="max-width: 300px; margin: 0 auto;">
+                        Reintentar Simulador
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // BASE DE DATOS DE PREGUNTAS
+        const questions = [
+            // PLANIFICACIÓN
+            {
+                type: 'planning',
+                text: '¿Cuál es el primer paso para integrar TIC de manera efectiva en la planificación de una clase?',
+                options: [
+                    { text: 'Seleccionar los recursos tecnológicos más costosos disponibles', correct: false },
+                    { text: 'Identificar las necesidades de aprendizaje de los estudiantes y cómo las TIC pueden satisfacerlas', correct: true },
+                    { text: 'Usar todas las herramientas TIC disponibles sin importar su relevancia', correct: false },
+                    { text: 'Dejar que los estudiantes elijan qué tecnología usar', correct: false }
+                ],
+                justification: 'La integración efectiva de TIC comienza con una evaluación de necesidades específicas de aprendizaje. Según MINERD, debe haber un propósito pedagógico claro para cada recurso utilizado.'
+            },
+            {
+                type: 'planning',
+                text: '¿Qué aspecto es crítico ANTES de usar TIC en el aula?',
+                options: [
+                    { text: 'Preparar y probar los recursos tecnológicos con anticipación', correct: true },
+                    { text: 'Comprar la tecnología más nueva del mercado', correct: false },
+                    { text: 'Usar solo aplicaciones gratuitas de internet', correct: false },
+                    { text: 'Implementar directamente sin ensayos previos', correct: false }
+                ],
+                justification: 'Es fundamental preparar y probar todos los recursos antes de la clase para evitar problemas técnicos que interrumpan el aprendizaje. MINERD lo recomienda como parte del proceso ANTES.'
+            },
+            {
+                type: 'planning',
+                text: '¿Cuál es el objetivo de la fase DURANTE en la integración de TIC?',
+                options: [
+                    { text: 'Solo cumplir el horario de clase', correct: false },
+                    { text: 'Facilitar la participación, proporcionar apoyo técnico-pedagógico y evaluar continuamente', correct: true },
+                    { text: 'Permitir que los estudiantes usen las máquinas sin supervisión', correct: false },
+                    { text: 'Enseñar solo a los estudiantes con más experiencia tecnológica', correct: false }
+                ],
+                justification: 'La fase DURANTE es activa e interactiva. Incluye implementación gradual, facilitación de participación, apoyo técnico-pedagógico y evaluación continua del proceso.'
+            },
+            {
+                type: 'planning',
+                text: '¿Por qué es importante la reflexión DESPUÉS de usar TIC en clase?',
+                options: [
+                    { text: 'Solo para calificar a los estudiantes', correct: false },
+                    { text: 'Para evaluar resultados, recoger feedback y ajustar futuras planificaciones', correct: true },
+                    { text: 'No es importante, solo hay que seguir adelante', correct: false },
+                    { text: 'Para culpar a los estudiantes por errores técnicos', correct: false }
+                ],
+                justification: 'La reflexión DESPUÉS permite evaluar qué funcionó bien, qué necesita mejora y cómo ajustar futuras integraciones. Es parte del ciclo de mejora continua recomendado por MINERD.'
+            },
+            {
+                type: 'planning',
+                text: '¿Cuál es la importancia del Diseño Universal de Aprendizaje (DUA) al planificar con TIC?',
+                options: [
+                    { text: 'Es opcional y no afecta la calidad educativa', correct: false },
+                    { text: 'Garantiza que todos los estudiantes, incluyendo aquellos con necesidades específicas, puedan acceder al contenido', correct: true },
+                    { text: 'Solo es para estudiantes con discapacidades visuales', correct: false },
+                    { text: 'Aumenta innecesariamente la complejidad de la clase', correct: false }
+                ],
+                justification: 'El DUA es fundamental para garantizar equidad. Permite adaptar la presentación del contenido, proporcionar múltiples medios de acción y expresión, y reconocer diferentes estilos de aprendizaje.'
+            },
+            
+            // RECURSOS
+            {
+                type: 'resources',
+                text: '¿Cuáles son recursos tecnológicos disponibles en Nivel Inicial según MINERD?',
+                options: [
+                    { text: 'Solo computadoras de escritorio para uso exclusivo del docente', correct: false },
+                    { text: 'Laptop, tabletas, PDI, proyector, carrito tecnológico y robots móviles', correct: true },
+                    { text: 'No hay recursos para Nivel Inicial', correct: false },
+                    { text: 'Solo libros electrónicos', correct: false }
+                ],
+                justification: 'MINERD provee a Inicial con variados recursos: laptops, tabletas, Pizarras Digitales Interactivas (PDI), proyectores, carritos tecnológicos y robots educativos apropiados para la edad.'
+            },
+            {
+                type: 'resources',
+                text: '¿Qué recursos de Robótica Educativa están disponibles en Primaria?',
+                options: [
+                    { text: 'Solo Arduino', correct: false },
+                    { text: 'WEDO 1.0, WEDO 2.0, Wonder Dash Robot y Arduino', correct: true },
+                    { text: 'No hay robótica en Primaria', correct: false },
+                    { text: 'Solo Lego Mindstorms EV3', correct: false }
+                ],
+                justification: 'Primaria cuenta con Kit de Robótica Educativa WEDO (1.0 y 2.0), Wonder Dash Robot, y acceso a Arduino para proyectos STEAM según nivel y capacidad.'
+            },
+            {
+                type: 'resources',
+                text: '¿Cuál es la diferencia clave en recursos TIC entre Primaria y Secundaria?',
+                options: [
+                    { text: 'No hay diferencia', correct: false },
+                    { text: 'Secundaria tiene recursos más avanzados como Tetrix, Arduino, y Laboratorios de Ciencias especializados', correct: true },
+                    { text: 'Primaria tiene más recursos que Secundaria', correct: false },
+                    { text: 'Ambos niveles solo usan similares básicos', correct: false }
+                ],
+                justification: 'Secundaria tiene acceso a recursos más sofisticados para desarrollar pensamiento crítico: Lego Mindstorms EV3, Tetrix PRIME/MAX, Arduino, y laboratorios especializados como Pasco y NEULOG.'
+            },
+            {
+                type: 'resources',
+                text: '¿Qué es una Pizarra Digital Interactiva (PDI)?',
+                options: [
+                    { text: 'Una pizarra normal pintada de blanco', correct: false },
+                    { text: 'Un recurso que permite interactividad en tiempo real, proyección de contenido y participación de estudiantes', correct: true },
+                    { text: 'Solo un proyector regular', correct: false },
+                    { text: 'Un tablet personal del docente', correct: false }
+                ],
+                justification: 'La PDI es un recurso tecnológico que permite proyectar contenido de forma interactiva, que docentes y estudiantes pueden tocar para manipular contenido, crear actividades dinámicas y colaborativas.'
+            },
+            {
+                type: 'resources',
+                text: '¿Cuál es la ventaja de contar con un Carrito Tecnológico en el centro educativo?',
+                options: [
+                    { text: 'Solo proporciona transporte de equipos', correct: false },
+                    { text: 'Permite llevar recursos tecnológicos a diferentes aulas para un acceso equitativo', correct: true },
+                    { text: 'Es un gasto innecesario', correct: false },
+                    { text: 'Solo sirve para aulas especializadas', correct: false }
+                ],
+                justification: 'El Carrito Tecnológico es fundamental para llevar recursos como laptops, tabletas y proyectores a diferentes espacios, permitiendo acceso flexible y equitativo a la tecnología en todo el centro.'
+            },
+            
+            // METODOLOGÍAS
+            {
+                type: 'methodology',
+                text: '¿Cuál es el propósito principal de la Metodología STEAM?',
+                options: [
+                    { text: 'Enseñar solo programación y robótica', correct: false },
+                    { text: 'Integrar Ciencia, Tecnología, Ingeniería, Artes y Matemática de forma interdisciplinaria', correct: true },
+                    { text: 'Reemplazar asignaturas tradicionales', correct: false },
+                    { text: 'Usar solo herramientas digitales sin interacción física', correct: false }
+                ],
+                justification: 'STEAM integra cinco disciplinas de forma holística para desarrollar pensamiento crítico, creatividad y habilidades del siglo XXI a través de proyectos contextualizados.'
+            },
+            {
+                type: 'methodology',
+                text: '¿Qué caracteriza el Aprendizaje Basado en Proyectos (ABP)?',
+                options: [
+                    { text: 'Solo memorizar contenidos de un tema', correct: false },
+                    { text: 'Los estudiantes resuelven problemas reales o simulados mediante proyectos integradores significativos', correct: true },
+                    { text: 'El docente proporciona todas las respuestas', correct: false },
+                    { text: 'No permite participación activa de estudiantes', correct: false }
+                ],
+                justification: 'ABP es una estrategia donde estudiantes investigan, colaboran y crean soluciones a problemas contextualizados, desarrollando aprendizaje significativo y autorregulado.'
+            },
+            {
+                type: 'methodology',
+                text: '¿Cuál es la idea central del Aula Invertida?',
+                options: [
+                    { text: 'Impartir todas las clases en la sala invertida', correct: false },
+                    { text: 'Los estudiantes aprenden contenido en casa y en clase realizan actividades prácticas y refuerzo', correct: true },
+                    { text: 'Invertir el orden de los temas del currículo', correct: false },
+                    { text: 'No es una metodología válida', correct: false }
+                ],
+                justification: 'Flipped Classroom permite que estudiantes se familiaricen con contenido teórico antes de clase, liberando tiempo presencial para actividades prácticas, preguntas y consolidación del aprendizaje.'
+            },
+            {
+                type: 'methodology',
+                text: '¿Cómo la Gamificación mejora el aprendizaje con TIC?',
+                options: [
+                    { text: 'Solo entretiene sin propósito educativo', correct: false },
+                    { text: 'Incorpora elementos de juegos para aumentar motivación, engagement y retención de contenidos', correct: true },
+                    { text: 'Reemplaza la evaluación formal', correct: false },
+                    { text: 'Solo funciona en clases de Educación Física', correct: false }
+                ],
+                justification: 'Gamificación usa puntos, insignias, retos y competencias para motivar y enganchar a estudiantes, mejorando participación y retención de conceptos clave.'
+            },
+            {
+                type: 'methodology',
+                text: '¿Qué es el Aprendizaje Significativo en el contexto de TIC?',
+                options: [
+                    { text: 'Usar la mayor cantidad posible de tecnología', correct: false },
+                    { text: 'Conectar nuevos conocimientos con saberes previos del estudiante de forma coherente y contextualizada', correct: true },
+                    { text: 'Memorizar información sin conexión con la realidad', correct: false },
+                    { text: 'Ignorar los conocimientos previos de los estudiantes', correct: false }
+                ],
+                justification: 'Aprendizaje Significativo ocurre cuando nuevos conocimientos se conectan lógicamente con la estructura cognitiva del estudiante, creando comprensión duradera y transferible.'
+            },
+            
+            // ACCESIBILIDAD
+            {
+                type: 'accessibility',
+                text: '¿Cuál es el Principio de Accesibilidad Digital "Perceptible"?',
+                options: [
+                    { text: 'Que solo sea visible en pantalla', correct: false },
+                    { text: 'Que la información se muestre de forma explícita y comprensible a través de múltiples medios', correct: true },
+                    { text: 'Que use solo texto sin imágenes', correct: false },
+                    { text: 'Que solo funcione en ciertos navegadores', correct: false }
+                ],
+                justification: 'Perceptible significa proporcionar contenido en múltiples formatos: texto alternativo para imágenes, videos con subtítulos, contenido adaptable a diferentes dispositivos y formatos.'
+            },
+            {
+                type: 'accessibility',
+                text: '¿Por qué es importante proporcionar texto alternativo en imágenes educativas?',
+                options: [
+                    { text: 'Solo es una recomendación opcional', correct: false },
+                    { text: 'Permite que estudiantes con discapacidad visual accedan al contenido a través de lectores de pantalla', correct: true },
+                    { text: 'No tiene utilidad educativa real', correct: false },
+                    { text: 'Solo se necesita en páginas web, no en aulas', correct: false }
+                ],
+                justification: 'El texto alternativo es esencial para la accesibilidad. Permite a personas ciegas o con baja visión entender el contenido visual mediante tecnologías de asistencia.'
+            },
+            {
+                type: 'accessibility',
+                text: '¿Qué significa el Principio "Operable" en Accesibilidad Digital?',
+                options: [
+                    { text: 'Solo que funcione en un navegador', correct: false },
+                    { text: 'Que todos los componentes sean manejables y navegables desde teclado con suficiente tiempo', correct: true },
+                    { text: 'Que sea fácil para el docente, no importa el estudiante', correct: false },
+                    { text: 'Que solo funcione con ratón', correct: false }
+                ],
+                justification: 'Operable significa que interfaces pueden ser navegadas sin depender únicamente de ratón, con control de tiempo suficiente y sin contenido que cause daño (flashes epilépticos).'
+            },
+            {
+                type: 'accessibility',
+                text: '¿Cuál es la importancia del contraste de colores en accesibilidad digital?',
+                options: [
+                    { text: 'Solo es cuestión de estética', correct: false },
+                    { text: 'Asegura que estudiantes con baja visión o daltonismo puedan leer el contenido claramente', correct: true },
+                    { text: 'No afecta el aprendizaje', correct: false },
+                    { text: 'Solo importa para impresión', correct: false }
+                ],
+                justification: 'Adecuado contraste entre texto y fondo es crucial para legibilidad, especialmente para personas con baja visión o deficiencias en la percepción del color (daltonismo).'
+            },
+            {
+                type: 'accessibility',
+                text: '¿Qué permite el Diseño Universal de Aprendizaje (DUA) en relación con accesibilidad?',
+                options: [
+                    { text: 'Solo beneficia a estudiantes con discapacidades', correct: false },
+                    { text: 'Proporciona múltiples formas de representar, actuar, expresarse y enganchar - beneficiando a todos', correct: true },
+                    { text: 'Complica innecesariamente la educación', correct: false },
+                    { text: 'Es un requerimiento legal que no educativo', correct: false }
+                ],
+                justification: 'DUA reconoce la diversidad en el aula. Al proporcionar múltiples medios (representación, acción, expresión, enganche), beneficia a TODOS, no solo a estudiantes con necesidades específicas.'
+            },
+            
+            // MARCO MINERD
+            {
+                type: 'framework',
+                text: '¿Cuál es la responsabilidad principal del Maestro de Informática Educativa según MINERD?',
+                options: [
+                    { text: 'Solo enseñar programación avanzada', correct: false },
+                    { text: 'Planificar, implementar y evaluar proyectos educativos innovadores integrando TIC', correct: true },
+                    { text: 'Mantener los equipos sin intervenir en educación', correct: false },
+                    { text: 'Solo reparar computadoras dañadas', correct: false }
+                ],
+                justification: 'MINERD designa al Maestro de Informática/Docente de Tecnología para orientar la integración pedagógica de TIC, no solo su aspecto técnico.'
+            },
+            {
+                type: 'framework',
+                text: '¿A qué se refiere la "integración curricular de las TIC" en el modelo MINERD?',
+                options: [
+                    { text: 'Usar TIC como materia separada del currículo', correct: false },
+                    { text: 'Incorporar TIC transversalmente en las asignaturas para enriquecer el aprendizaje', correct: true },
+                    { text: 'Ignorar las TIC en la planificación curricular', correct: false },
+                    { text: 'Usar TIC solo en educación técnica', correct: false }
+                ],
+                justification: 'Integración curricular significa que TIC atraviesan todas las disciplinas como herramienta mediadora del aprendizaje, no como asignatura aislada.'
+            },
+            {
+                type: 'framework',
+                text: '¿Cuál es el propósito de las Ordenanzas 01-2024 y 02-2024 de MINERD?',
+                options: [
+                    { text: 'Solo regular aspectos administrativos', correct: false },
+                    { text: 'Establecer marcos normativos para la evaluación y gestión educativa con enfoque de calidad', correct: true },
+                    { text: 'Eliminar la necesidad de planificación', correct: false },
+                    { text: 'Reducir la participación de docentes', correct: false }
+                ],
+                justification: 'Estas ordenanzas definen estándares de calidad, procesos de evaluación y gestión educativa que incluyen la integración efectiva de TIC en la práctica pedagógica.'
+            },
+            {
+                type: 'framework',
+                text: '¿Cómo se alinea la integración de TIC con los Objetivos de Desarrollo Sostenible (ODS)?',
+                options: [
+                    { text: 'Las TIC no tienen relación con ODS', correct: false },
+                    { text: 'Reduciendo costos de educación sin mejorar calidad', correct: false },
+                    { text: 'Contribuyendo a educación de calidad (ODS 4) y democratizando el acceso al conocimiento', correct: true },
+                    { text: 'Solo en asignaturas ambientales', correct: false }
+                ],
+                justification: 'Integración de TIC alinea con ODS 4 (Educación de Calidad) al mejorar acceso, inclusión y calidad educativa para todas las comunidades.'
+            },
+            
+            // HERRAMIENTAS DIGITALES
+            {
+                type: 'tools',
+                text: '¿Cuál es la ventaja de usar Plataformas de Aprendizaje Virtual en educación?',
+                options: [
+                    { text: 'Solo para sustituir clases presenciales', correct: false },
+                    { text: 'Facilitan aprendizaje flexible, autorregulado y acceso a recursos disponibles 24/7', correct: true },
+                    { text: 'No tienen ventajas reales', correct: false },
+                    { text: 'Solo para estudiantes avanzados', correct: false }
+                ],
+                justification: 'Plataformas permiten aprendizaje flexible, asincrónico, acceso a recursos diversos y seguimiento del progreso individual de cada estudiante.'
+            },
+            {
+                type: 'tools',
+                text: '¿Qué son los Recursos Educativos Abiertos (REA)?',
+                options: [
+                    { text: 'Materiales que solo pueden comprar instituciones privadas', correct: false },
+                    { text: 'Recursos educativos disponibles libremente bajo licencias abiertas para uso, modificación y distribución', correct: true },
+                    { text: 'Solo vídeos de YouTube', correct: false },
+                    { text: 'No tienen validez educativa', correct: false }
+                ],
+                justification: 'REA incluyen libros, vídeos, imágenes, planes de clase, bajo licencias como Creative Commons, permitiendo acceso equitativo al conocimiento.'
+            },
+            {
+                type: 'tools',
+                text: '¿Cuál es el propósito de usar Herramientas de Gamificación en clase?',
+                options: [
+                    { text: 'Solo para entretener estudiantes', correct: false },
+                    { text: 'Aumentar motivación, participación y retención de contenidos mediante mecánicas de juego', correct: true },
+                    { text: 'Reemplazar la enseñanza formal', correct: false },
+                    { text: 'Hacer clases más difíciles', correct: false }
+                ],
+                justification: 'Gamificación aplica mecánicas de juego (puntos, insignias, niveles, desafíos) para motivar participación activa y mejorar aprendizaje.'
+            },
+            {
+                type: 'tools',
+                text: '¿Qué son los Repositorios Digitales en contexto educativo?',
+                options: [
+                    { text: 'Solo bases de datos de evaluaciones', correct: false },
+                    { text: 'Espacios centralizados donde se almacenan y organizan recursos educativos para acceso compartido', correct: true },
+                    { text: 'No tienen utilidad en educación moderna', correct: false },
+                    { text: 'Solo para guardar calificaciones', correct: false }
+                ],
+                justification: 'Repositorios organizan digitalmente recursos educativos (materiales, lecciones, proyectos) permitiendo que docentes y estudiantes accedan y compartan fácilmente.'
+            },
+            {
+                type: 'tools',
+                text: '¿Cómo contribuye la Inteligencia Artificial ética en educación?',
+                options: [
+                    { text: 'Reemplazando a los docentes completamente', correct: false },
+                    { text: 'Personalizando el aprendizaje, detectando dificultades y proporcionando retroalimentación adaptada', correct: true },
+                    { text: 'Simplemente automatizando calificaciones', correct: false },
+                    { text: 'No tiene aplicación educativa válida', correct: false }
+                ],
+                justification: 'IA ética en educación personaliza experiencias de aprendizaje, identifica necesidades individuales y proporciona retroalimentación inmediata y adaptada.'
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let answers = {};
+        let shuffledQuestions = [];
+        let quizStartTime = null;
+        let timerInterval = null;
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function shuffleOptions(question) {
+            const correct = question.options.find(o => o.correct);
+            const incorrect = question.options.filter(o => !o.correct);
+            return shuffleArray([correct, ...incorrect]);
+        }
+        
+        function startQuiz() {
+            const docenteName = document.getElementById('docenteName').value.trim();
+            if (!docenteName) {
+                alert('Por favor ingresa tu nombre completo para iniciar el simulador.');
+                return;
+            }
+            
+            document.getElementById('welcomeSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            document.getElementById('docenteNameDisplay').textContent = docenteName;
+            
+            shuffledQuestions = shuffleArray(questions).slice(0, 25);
+            shuffledQuestions.forEach(q => {
+                q.displayOptions = shuffleOptions(q);
+            });
+            
+            document.getElementById('totalQuestions').textContent = shuffledQuestions.length;
+            
+            quizStartTime = Date.now();
+            startTimer();
+            showQuestion();
+        }
+        
+        function startTimer() {
+            const totalSeconds = 40 * 60;
+            document.getElementById('timerDisplay').style.display = 'inline-block';
+            
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                const remaining = totalSeconds - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerDisplay = document.getElementById('timeRemaining');
+                timerDisplay.textContent = timeStr;
+                
+                if (remaining <= 300) {
+                    timerDisplay.parentElement.classList.add('warning');
+                }
+            }, 1000);
+        }
+        
+        function showQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            
+            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / shuffledQuestions.length * 100) + '%';
+            
+            const typeTag = document.getElementById('typeTag');
+            const typeMap = {
+                'planning': 'PLANIFICACIÓN CON TIC',
+                'resources': 'RECURSOS TECNOLÓGICOS',
+                'methodology': 'METODOLOGÍA PEDAGÓGICA',
+                'accessibility': 'ACCESIBILIDAD DIGITAL',
+                'framework': 'MARCO NORMATIVO MINERD',
+                'tools': 'HERRAMIENTAS DIGITALES'
+            };
+            
+            typeTag.className = 'question-type ' + question.type;
+            typeTag.textContent = typeMap[question.type] || 'PREGUNTA';
+            
+            document.getElementById('questionText').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.displayOptions.forEach((option, index) => {
+                const optionElement = document.createElement('label');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                    <span class="option-label">${option.text}</span>
+                `;
+                
+                optionElement.addEventListener('change', () => {
+                    answers[currentQuestion] = index;
+                    updateProgressCount();
+                    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('btnPrevious').disabled = currentQuestion === 0;
+            document.getElementById('btnNext').textContent = currentQuestion === shuffledQuestions.length - 1 ? 'Finalizar simulador →' : 'Siguiente pregunta →';
+            
+            updateProgressCount();
+        }
+        
+        function updateProgressCount() {
+            const answered = Object.keys(answers).length;
+            document.getElementById('answeredCount').textContent = answered;
+        }
+        
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < shuffledQuestions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                document.querySelector('.quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const results = [];
+            
+            shuffledQuestions.forEach((question, index) => {
+                const selectedIndex = answers[index];
+                const isCorrect = selectedIndex !== undefined && question.displayOptions[selectedIndex].correct;
+                
+                if (isCorrect) {
+                    score += 2;
+                }
+                
+                results.push({
+                    question: question.text,
+                    selectedIndex,
+                    options: question.displayOptions,
+                    correct: isCorrect,
+                    type: question.type
+                });
+            });
+            
+            const percentage = Math.round((score / 50) * 100);
+            const approved = score >= 35;
+            
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalPercentage').textContent = percentage + '%';
+            
+            const statusEl = document.getElementById('resultStatus');
+            if (approved) {
+                statusEl.className = 'result-status approved';
+                statusEl.innerHTML = '<strong>✓ Simulación Aprobada</strong><p>¡Felicitaciones! Demuestras dominio en integración de TIC, metodologías pedagógicas modernas y accesibilidad digital. Estás preparado/a para implementar educación de calidad con tecnología.</p>';
+            } else {
+                statusEl.className = 'result-status not-approved';
+                statusEl.innerHTML = '<strong>✗ Simulación No Aprobada</strong><p>Necesitas reforzar conocimientos sobre integración de TIC, recursos disponibles, metodologías pedagógicas y accesibilidad digital. Revisa la retroalimentación a continuación para mejorar.</p>';
+            }
+            
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            feedbackContainer.innerHTML = '<h3 class="feedback-title">Retroalimentación de respuestas</h3>';
+            
+            results.forEach((result, index) => {
+                const selectedOption = result.selectedIndex !== undefined ? result.options[result.selectedIndex] : null;
+                const correctOption = result.options.find(o => o.correct);
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = `answer-item ${result.correct ? 'correct' : 'incorrect'}`;
+                
+                const typeMap = {
+                    'planning': 'Planificación con TIC',
+                    'resources': 'Recursos Tecnológicos',
+                    'methodology': 'Metodología Pedagógica',
+                    'accessibility': 'Accesibilidad Digital',
+                    'framework': 'Marco Normativo MINERD',
+                    'tools': 'Herramientas Digitales'
+                };
+                
+                let html = `
+                    <div class="question-number">Pregunta ${index + 1} - ${typeMap[result.type] || 'Pregunta'}</div>
+                    <div class="question-text-feedback">${result.question}</div>
+                `;
+                
+                if (result.selectedIndex !== undefined) {
+                    html += `<div class="your-answer"><strong>Tu respuesta:</strong> ${selectedOption.text}</div>`;
+                } else {
+                    html += `<div class="your-answer"><strong>No respondida</strong></div>`;
+                }
+                
+                if (!result.correct) {
+                    html += `<div class="correct-answer"><strong>Respuesta correcta:</strong> ${correctOption.text}</div>`;
+                }
+                
+                html += `<div class="justification"><strong>Justificación:</strong> ${correctOption.justification}</div>`;
+                
+                itemEl.innerHTML = html;
+                feedbackContainer.appendChild(itemEl);
+            });
+            
+            document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            shuffledQuestions = [];
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('welcomeSection').classList.remove('hidden');
+            document.getElementById('docenteName').value = '';
+            document.getElementById('docenteName').focus();
+        }
+    </script>
+</body>
+</html>
